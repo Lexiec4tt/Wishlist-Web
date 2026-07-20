@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>
+		Wishlist
+	</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<script type="module" src ="js/script.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+</head>
+<body>
+	<header id="main-header">
+		<h1>💜Making our Wishes come True💚</h1>
+	</header>
+	
+	<div class="flexing">
+		<aside>
+			<nav>
+				<ul>
+					<li><a href=index.html>🏠Home</a></li>
+					<li><a href=wishlist.html>🎁My Wishlist</a></li>
+					<li><a href=explore.html>👤View Other Wishlists</a></li>
+					<li class="dropdown">
+						<button id="settingsBtn">⚙ Settings</button>
+
+						<ul id="settingsMenu" class="dropdown-menu hidden">
+							<li><button id="theme-toggle">🌙 Dark Mode</button></li>
+							<li><button id="logoutBtn" class="hidden">🚪 Log Out</button></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+		<main>
+				<h2>My Wishlist</h2>
+				
+				<section id="wishlist-container">
+				
+					<article class="card template">
+						<h3><a class="Item-link" href=#>Item Name</a></h3>
+						<p class="desc">Description/Specification:</p>
+						<p class="priority">Priority level:</p>
+						<small class="date">Added:</small>
+						    <label class="received-check">
+								<input type="checkbox" disabled>Received</label>
+							<button id="deleteBtn" class="hidden">Delete</button>
+							
+					</article>
+				</section>
+				
+				<section id="wishlist-edit" class="card hidden">
+					<h3>Add an Item</h3>
+					<form id="wishlist-form">
+						<label for="item-name">Item name:</label>
+						<input type="text" id="item-name" name="item-name" required>
+						<label for="item-link">Item link:</label>
+						<input type="url" id="item-link" name="item-link" placeholder="https://..." required>
+						<label for="desc">Description/Specification:</label>
+						<input type="text" id="item-desc" name="item-desc">
+						<label for="priority">Priority Level:</label>
+						<select id="priority">
+							<option>Low</option>
+							<option>Medium</option>
+							<option>High</option>
+						</select>
+						<button type="submit">Add Item</button>
+					</form>
+				
+				<section id="logged-out" class="hidden">
+					<h2> Please Log in before Proceeding. </h2>
+				</section>
+				
+		</main>
+	</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>
+		Home
+	</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<script type="module" src ="js/script.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">	
+</head>
+
+<body>
+	<header id="main-header">
+		<h1>💜Making our Wishes come True💚</h1>
+	</header>
+	
+	<div class="flexing">
+		<aside>
+			<nav>
+				<ul>
+					<li><a href=index.html>🏠Home</a></li>
+					<li><a href=wishlist.html>🎁My Wishlist</a></li>
+					<li><a href=explore.html>👤View Other Wishlists</a></li>
+					<li class="dropdown">
+						<button id="settingsBtn">⚙ Settings</button>
+
+						<ul id="settingsMenu" class="dropdown-menu hidden">
+							<li><button id="theme-toggle">🌙 Dark Mode</button></li>
+							<li><button id="logoutBtn" class="hidden">🚪 Log Out</button></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+
+		<main>
+			<section id="welcome">
+				<p> Helloo!! Welcome to our wishlist website ✨✨✨ <br>
+				I made this website mainly to make something pretty huehue, but it's functional nonetheless, so <br>
+				I think the website's intuitive enough that you can figure everything out ^^ <br>
+				Have Fun! </p>
+			</section>
+			<section id="login" class=" card">
+				<h3>Welcome back!</h3>
+				<form id="login-form">
+					<label for="email">Email</label>
+					<input type="email" id="email" required>
+
+					<label for="password">Password</label>
+					<input type="password" id="password" required>
+
+					<button type="submit">Log In</button>
+				</form>
+				<p>New to the website? Sign up <a href=signup.html>here.</a></p>
+			</section>
+			
+			<section class="recent hidden">
+				<header>
+					<h2>🎁 Recently Added 🎁</h2>
+				</header>
+				
+				<article class="card">
+					<h3>placeholder</h3>
+					<p>placeholder date</p>
+					<span>priority lvl</span>
+				</article>
+			</section>
+		</main>
+	</div>
+</body>
+</html>
+			

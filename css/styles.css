@@ -1,0 +1,149 @@
+
+.dark {
+	--bg-image: url("https://i.pinimg.com/736x/c9/fa/cd/c9facd028f6767c827106f7d6b613412.jpg");
+	--aside-bg-image: url("https://i.pinimg.com/736x/13/80/79/138079e6790fde58f59a8b8a4f0c7b67.jpg");
+	--header-bg-color: #3C204F;
+	--font-color: #F4FFA3;
+	--bg-color: #3F6B1A;
+	--extra-color:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+}
+
+:root {
+	--bg-image: url("https://i.pinimg.com/736x/59/7b/29/597b29c8fff122df214eaa41f07564d5.jpg");
+	--aside-bg-image: url("https://i.pinimg.com/736x/0e/3e/87/0e3e87a2b3beac6e46cef3cbbf72eada.jpg");
+	--header-bg-color: #D2E8AC;
+	--font-color: #3F2252;
+	--bg-color: #DAB8F2;
+	--extra-color:linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+}
+
+body {
+	font-family: "Fredoka", sans-serif;
+	color: var(--font-color);
+	margin: 0;
+	background-image: var(--bg-image);
+	background-size: cover;
+}
+
+.flexing{
+	display: flex;
+	margin: 0 auto;
+}
+
+#main-header {
+	background-color: var(--header-bg-color);
+	height: 5rem;
+	align-content: center;
+	position: sticky;
+}
+
+header h1{
+	text-align:right;
+	margin: 0;
+}
+
+#welcome {
+	font-size: 1.25rem;
+	margin: 3rem auto 0;
+}
+
+main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-image: var(--bg-image);
+	background-size: cover;
+}
+
+.card {
+	margin: 1rem auto;
+	background-color: var(--bg-color);
+	padding: 2rem;
+	border-radius: 20px;
+	box-shadow: 5px 5px 10px var(--font-color);
+	max-width: 20rem;
+	flex-wrap: wrap;
+    gap: 20px;
+}
+.template {
+	transition: transform 0.2s ease,
+				box-shadow 0.2s ease;	
+}
+
+.template:hover {
+	transform: translateY(-5px) scale(1.1);	 
+}
+
+aside {
+	width: 250px;
+	min-height: 100vh;
+	background-image: var(--extra-color),var(--aside-bg-image);
+	background-size: cover;
+	position: sticky;
+}
+
+nav ul {
+	list-style-type: none;
+	text-align: left;
+}
+
+nav a {
+	text-decoration: none;
+	font-size: 1.5rem;
+	line-height: 3rem;
+	color: inherit;
+}
+
+#settingsBtn {
+	background: none;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+	font-size: 1.5rem;
+	line-height: 3rem;
+    cursor: pointer;
+	color: inherit;
+}
+
+.dropdown-menu button {
+	background: none;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+	font-size: 1.5rem;
+	line-height: 2rem;
+    cursor: pointer;
+	color: inherit;
+}
+
+.dropdown-menu,.received-check{
+    display: block;
+}
+
+#login-form, #wishlist-form, #signup-form{
+	display: flex;
+	flex-direction: column;
+	line-height: 1.5rem;
+}
+
+.hidden {
+	display: none;
+}
+
+#signup {
+	text-align: center;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+	text-align: center;
+	flex-wrap:wrap;
+	gap:.25rem;
+}
+
+a {
+	color:var(--font-color);
+}
