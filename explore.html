@@ -28,23 +28,27 @@
 
 						<ul id="settingsMenu" class="dropdown-menu hidden">
 							<li><button id="theme-toggle">🌙 Dark Mode</button></li>
-							<li><button id="logoutBtn" class="hidden">🚪 Log Out</button></li>
+							<li><button id="logoutBtn">🚪 Log Out</button></li>
 						</ul>
 					</li>
 				</ul>
 			</nav>
 		</aside>
 		<main>
-					<h2>View Other Wishlists</h2>
+			<h2>View Other Wishlists</h2>
+
+			<section id="explore-container" hidden>
+				<template id="profile-template">
+					<a href="placeholder" id="card-link" hidden>
+						<article class="card">
+							<h3 id="profile-name">Wishlist Card</h3>
+							<p>Click to See</p>
+						</article>
+					</a>
+				</template>
+			</section>
 				
-				<a href="placeholder" class="card-link">
-					<article class="card template">
-						<h3>Wishlist Card</h3>
-						<p>Click to See</p>
-					</article>
-				</a>
-				
-				<section id="logged-out" class="hidden">
+				<section id="logged-out" hidden>
 					<h2> Please Log in before Proceeding. </h2>
 				</section>
 		</main>

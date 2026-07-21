@@ -29,7 +29,7 @@
 
 						<ul id="settingsMenu" class="dropdown-menu hidden">
 							<li><button id="theme-toggle">🌙 Dark Mode</button></li>
-							<li><button id="logoutBtn" class="hidden">🚪 Log Out</button></li>
+							<li><button id="logoutBtn" hidden>🚪 Log Out</button></li>
 						</ul>
 					</li>
 				</ul>
@@ -43,21 +43,21 @@
 				I think the website's intuitive enough that you can figure everything out ^^ <br>
 				Have Fun! </p>
 			</section>
-			<section id="login" class=" card">
+			<section id="login" class="card" hidden>
 				<h3>Welcome back!</h3>
 				<form id="login-form">
 					<label for="email">Email</label>
-					<input type="email" id="email" required>
+					<input type="email" id="email" name="login-email" required>
 
 					<label for="password">Password</label>
-					<input type="password" id="password" required>
+					<input type="password" id="password" name="login-password" required>
 
 					<button type="submit">Log In</button>
 				</form>
 				<p>New to the website? Sign up <a href=signup.html>here.</a></p>
 			</section>
 			
-			<section class="recent hidden">
+			<section class="recently-added" hidden>
 				<header>
 					<h2>🎁 Recently Added 🎁</h2>
 				</header>

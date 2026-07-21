@@ -28,30 +28,30 @@
 
 						<ul id="settingsMenu" class="dropdown-menu hidden">
 							<li><button id="theme-toggle">🌙 Dark Mode</button></li>
-							<li><button id="logoutBtn" class="hidden">🚪 Log Out</button></li>
+							<li><button id="logoutBtn">🚪 Log Out</button></li>
 						</ul>
 					</li>
 				</ul>
 			</nav>
 		</aside>
 		<main>
-				<h2>My Wishlist</h2>
+				<h2 id="wishlist-name">My Wishlist</h2>
 				
-				<section id="wishlist-container">
-				
-					<article class="card template">
-						<h3><a class="Item-link" href=#>Item Name</a></h3>
-						<p class="desc">Description/Specification:</p>
-						<p class="priority">Priority level:</p>
-						<small class="date">Added:</small>
-						    <label class="received-check">
-								<input type="checkbox" disabled>Received</label>
-							<button id="deleteBtn" class="hidden">Delete</button>
-							
-					</article>
+				<section id="wishlist-container" hidden>
+					<template id="wishlist-template">
+						<article class="card">
+							<h3><a class="Item-link" href=#>Item Name</a></h3>
+							<p class="desc">Description/Specification:</p>
+							<p class="priority">Priority level:</p>
+							<small class="date">Added:</small>
+								<label class="received-check">
+									<input type="checkbox" disabled>Received</label>
+								<button id="deleteBtn" hidden>Delete</button>	
+						</article>
+					</template>
 				</section>
 				
-				<section id="wishlist-edit" class="card hidden">
+				<section id="wishlist-edit" class="card" hidden>
 					<h3>Add an Item</h3>
 					<form id="wishlist-form">
 						<label for="item-name">Item name:</label>
@@ -68,8 +68,9 @@
 						</select>
 						<button type="submit">Add Item</button>
 					</form>
+				</section>
 				
-				<section id="logged-out" class="hidden">
+				<section id="logged-out" hidden>
 					<h2> Please Log in before Proceeding. </h2>
 				</section>
 				
