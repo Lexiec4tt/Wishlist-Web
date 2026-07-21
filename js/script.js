@@ -33,6 +33,7 @@ if (themeToggle) {
   import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
   import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
   import { signOut} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  import { serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -168,7 +169,7 @@ if(wishlistForm) {
     const itemName = wishlistForm["item-name"].value;
     const itemLink = wishlistForm["item-link"].value;
     const itemPriority = wishlistForm["item-priority"].value;
-    const itemReceived = false; // Default value for received status
+    const itemDescription = wishlistForm["item-desc"].value;
 
     try {
       const user = auth.currentUser;
@@ -178,7 +179,9 @@ if(wishlistForm) {
           name: itemName,
           link: itemLink,
           priority: itemPriority,
-          received: itemReceived
+          description: itemDescription,
+          received: false,
+          addedDate: serverTimestamp() // Store the current date and time
         });
       }
     } catch (error) {
@@ -187,7 +190,7 @@ if(wishlistForm) {
   });
 }
 
-function createWishlistItemElement(itemData) {
+function createWishlistItem(itemData) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
   const deleteButton = newItem.querySelector("#deleteBtn");

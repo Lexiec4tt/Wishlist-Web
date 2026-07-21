@@ -61,10 +61,11 @@
 						<label for="desc">Description/Specification:</label>
 						<input type="text" id="item-desc" name="item-desc">
 						<label for="priority">Priority Level:</label>
-						<select id="priority">
-							<option>Low</option>
-							<option>Medium</option>
-							<option>High</option>
+						<select id="priority" name="item-priority" required>
+							<option value="" disabled selected>Select a priority</option>
+							<option value="low">Low</option>
+							<option value="medium">Medium</option>
+							<option value="high">High</option>
 						</select>
 						<button type="submit">Add Item</button>
 					</form>
