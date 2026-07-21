@@ -30,10 +30,13 @@ if (themeToggle) {
   import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
   import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-  import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  import { doc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
   import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
   import { signOut} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
   import { serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  import { deleteDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  import { updateDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -64,9 +67,11 @@ const loginSection = document.getElementById("login");
 const recentlyAddedSection = document.querySelector(".recently-added");
 const loggedout = document.getElementById("logged-out");
 const wishlistContainer = document.getElementById("wishlist-container");
-const wishlistForm = document.getElementById("wishlist-edit");
-const profileContainer = document.getElementById("profile-container");
+const wishlistFormContainer = document.getElementById("wishlist-edit");
+const wishlistForm = document.getElementById("wishlist-form");
+const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
+const deleteBtn = document.getElementById("deleteBtn");
 
 
 if (signupForm) {
@@ -85,9 +90,10 @@ if (signupForm) {
     await setDoc(userDocRef, {
       username: username,
       email: email,
-      joined: new Date() 
+      joined: serverTimestamp()
     });
-    // You can also store the username in Firestore if needed
+    
+    window.location.href = "index.html";
   } catch (error) {
     console.error(error);
   }
@@ -117,6 +123,7 @@ if (logoutBtn) {
     try {
       await signOut(auth);
       console.log("User logged out");
+      Window.location.reload();
     } catch (error) {
       console.error(error);
     } 
@@ -128,12 +135,14 @@ if(loggedout) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       wishlistContainer.hidden = false;
-      wishlistForm.hidden = false;
+      wishlistFormContainer.hidden = false;
       loggedout.hidden = true;
+      logoutBtn.hidden = false;
     } else {
       wishlistContainer.hidden = true;
       wishlistForm.hidden = true; 
       loggedout.hidden = false;
+      logoutBtn.hidden = true;
     }
   });
   }
@@ -143,9 +152,11 @@ if(loggedout) {
       if (user) {
         profileContainer.hidden = false;
         loggedout.hidden = true;
+        logoutBtn.hidden = false;
       } else {
         profileContainer.hidden = true;
         loggedout.hidden = false;
+        logoutBtn.hidden = true;
       }
     });
   }
@@ -163,6 +174,11 @@ if(loggedout) {
   });
 }
 
+const params = new URLSearchParams(window.location.search);
+const viewedUid = params.get("user");
+
+console.log("Viewed UID:", viewedUid);
+
 if(wishlistForm) {
   wishlistForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -174,15 +190,24 @@ if(wishlistForm) {
     try {
       const user = auth.currentUser;
       if (user) {
-        const wishlistItemRef = doc(db, "users", user.uid, "wishlist", itemName);
-        await setDoc(wishlistItemRef, {
+        const itemData = {
           name: itemName,
           link: itemLink,
           priority: itemPriority,
           description: itemDescription,
           received: false,
-          addedDate: serverTimestamp() // Store the current date and time
-        });
+          addedDate: serverTimestamp()
+        }
+
+        const wishlistItemRef = collection(db, "users", user.uid, "wishlist");
+        const docRef = await addDoc(wishlistItemRef, itemData);
+        console.log("Item added to wishlist");
+
+        itemData.id = docRef.id;
+
+        const newItem = createWishlistItem(itemData);
+        wishlistContainer.appendChild(newItem);
+
       }
     } catch (error) {
       console.error(error);
@@ -190,28 +215,82 @@ if(wishlistForm) {
   });
 }
 
+let isOwner = false;
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) return;
+    const uidToLoad = viewedUid || user.uid;
+
+    isOwner = uidToLoad === user.uid;
+
+    loadWishlist(uidToLoad);
+
+    if (!isOwner) {
+      wishlistFormContainer.hidden = true;
+    }
+});
+
+if(profileContainer) {
+  loadProfiles();
+}
+
+
 function createWishlistItem(itemData) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
+  const receivedCheckbox = newItem.querySelector("#received-checkbox");
   const deleteButton = newItem.querySelector("#deleteBtn");
+  deleteButton.hidden = !isOwner; // Hide delete button if not the owner
   newItem.querySelector(".card h3 a").textContent = itemData.name;
   newItem.querySelector(".card h3 a").href = itemData.link;
   newItem.querySelector(".desc").textContent = `Description/Specification: ${itemData.description || "N/A"}`;
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
-  newItem.querySelector(".date").textContent = `Added: ${itemData.addedDate.toDate().toLocaleDateString()}`;
-  newItem.querySelector("input[type='checkbox']").checked = itemData.received;
+  newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
+  newItem.querySelector("#received-checkbox").checked = itemData.received;
+  newItem.querySelector("#received-checkbox").disabled = !isOwner;
+
   return newItem;
+}
+
+async function loadWishlist() {
+  const user = viewedUid ? { uid: viewedUid } : auth.currentUser;
+  if (user) {
+    const wishlistRef = collection(db, "users", user.uid, "wishlist");
+    const snapshot = await getDocs(wishlistRef);
+
+    snapshot.forEach((doc) => {
+      const itemData = doc.data();
+      const newItem = createWishlistItem(itemData);
+      wishlistContainer.appendChild(newItem);
+    });
+  }
 }
 
 function createProfileCard(user, uid) {
 
-    const template = document.getElementById("profile-template");
+    const template = document.querySelector(".profile-template");
     const clone = template.content.cloneNode(true);
 
-    clone.querySelector(".profile-name").textContent = user.username;
-    clone.querySelector(".profile-link").href =
-        `wishlist.html?user=${uid}`;
+    clone.querySelector(".profile-name").textContent = user.username + "'s Wishlist";
+    clone.querySelector(".card-link").href = `wishlist.html?user=${uid}`;
 
     return clone;
 }
 
+async function loadProfiles() {
+  console.log("Loading profiles...");
+  const usersRef = collection(db, "users");
+  const snapshot = await getDocs(usersRef);
+
+  snapshot.forEach((doc) => {
+    const userData = { uid: doc.id, ...doc.data() };
+    const profileCard = createProfileCard(userData, doc.id);
+    profileContainer.appendChild(profileCard);
+  });
+}
+
+function toJsDate(timestamp) {
+  const ts = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+  return new Date(ts);
+}

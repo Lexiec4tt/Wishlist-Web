@@ -39,13 +39,13 @@
 				
 				<section id="wishlist-container" hidden>
 					<template id="wishlist-template">
-						<article class="card">
+						<article class="card template">
 							<h3><a class="Item-link" href=#>Item Name</a></h3>
 							<p class="desc">Description/Specification:</p>
 							<p class="priority">Priority level:</p>
 							<small class="date">Added:</small>
-								<label class="received-check">
-									<input type="checkbox" disabled>Received</label>
+								<label>
+									<input type="checkbox" id="received-checkbox" disabled>Received</label>
 								<button id="deleteBtn" hidden>Delete</button>	
 						</article>
 					</template>
@@ -58,7 +58,7 @@
 						<input type="text" id="item-name" name="item-name" required>
 						<label for="item-link">Item link:</label>
 						<input type="url" id="item-link" name="item-link" placeholder="https://..." required>
-						<label for="desc">Description/Specification:</label>
+						<label for="item-desc">Description/Specification:</label>
 						<input type="text" id="item-desc" name="item-desc">
 						<label for="priority">Priority Level:</label>
 						<select id="priority" name="item-priority" required>
