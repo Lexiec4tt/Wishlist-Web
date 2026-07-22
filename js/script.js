@@ -214,7 +214,7 @@ if(wishlistForm) {
 
         itemData.id = docRef.id;
 
-        const newItem = createWishlistItem(itemData);
+        const newItem = createWishlistItem(itemData, itemData.id);
         wishlistContainer.appendChild(newItem);
 
       }
@@ -245,7 +245,7 @@ if(profileContainer) {
 }
 
 
-function createWishlistItem(itemData) {
+function createWishlistItem(itemData, itemDataid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
   const receivedCheckbox = newItem.querySelector("#received-checkbox");
@@ -259,6 +259,8 @@ function createWishlistItem(itemData) {
   newItem.querySelector("#received-checkbox").checked = itemData.received;
   newItem.querySelector("#received-checkbox").disabled = !isOwner;
 
+  checkboxUpdate(receivedCheckbox,itemDataid);
+
   return newItem;
 }
 
@@ -270,7 +272,8 @@ async function loadWishlist() {
 
     snapshot.forEach((doc) => {
       const itemData = doc.data();
-      const newItem = createWishlistItem(itemData);
+      itemData.id = doc.id;
+      const newItem = createWishlistItem(itemData,itemData.id);
       wishlistContainer.appendChild(newItem);
     });
   }
@@ -302,4 +305,23 @@ async function loadProfiles() {
 function toJsDate(timestamp) {
   const ts = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
   return new Date(ts);
+}
+
+async function checkboxUpdate(receivedCheckbox,itemData) {
+    receivedCheckbox.addEventListener("change", async () => {
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      auth.currentUser.uid,
+      "wishlist",
+      itemData
+    );
+
+    console.log("Updating:", itemData);
+
+    await updateDoc(wishlistItemRef, {
+      received: receivedCheckbox.checked
+    });
+    console.log("done!");
+  })
 }
