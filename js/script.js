@@ -139,49 +139,31 @@ if (logoutBtn) {
 });
 }
 
-if(loggedout) {
-  if(wishlistContainer) {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      wishlistContainer.hidden = false;
-      wishlistFormContainer.hidden = false;
-      loggedout.hidden = true;
-      logoutBtn.hidden = false;
-    } else {
-      wishlistContainer.hidden = true;
-      wishlistForm.hidden = true; 
-      loggedout.hidden = false;
-      logoutBtn.hidden = true;
+onAuthStateChanged(auth, (user) => {
+
+    const loggedIn = !!user;
+
+    if (logoutBtn) {
+      logoutBtn.hidden = !loggedIn;
     }
-  });
-  }
-  else if(profileContainer) {
-    onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user);
-      if (user) {
-        profileContainer.hidden = false;
-        loggedout.hidden = true;
-        logoutBtn.hidden = false;
-      } else {
-        profileContainer.hidden = true;
-        loggedout.hidden = false;
-        logoutBtn.hidden = true;
-      }
-    });
-  }
-} else if(recentlyAddedSection) {
-  onAuthStateChanged(auth, (user) => {
-    if(user) {
-      recentlyAddedSection.hidden = false;
-      loginSection.hidden = true;
-      logoutBtn.hidden = false;
-    } else {
-      recentlyAddedSection.hidden = true;
-      loginSection.hidden = false;
-      logoutBtn.hidden = true;
+
+    if (wishlistContainer) {
+        wishlistContainer.hidden = !loggedIn;
+        wishlistFormContainer.hidden = !loggedIn;
+        loggedout.hidden = loggedIn;
     }
-  });
-}
+
+    if (profileContainer) {
+        profileContainer.hidden = !loggedIn;
+        loggedout.hidden = loggedIn;
+    }
+
+    if (recentlyAddedSection) {
+        recentlyAddedSection.hidden = !loggedIn;
+        loginSection.hidden = loggedIn;
+    }
+
+});
 
 const params = new URLSearchParams(window.location.search);
 const viewedUid = params.get("user");
@@ -260,6 +242,7 @@ function createWishlistItem(itemData, itemDataid) {
   newItem.querySelector("#received-checkbox").disabled = !isOwner;
 
   checkboxUpdate(receivedCheckbox,itemDataid);
+  deleteItem(deleteButton, itemDataid);
 
   return newItem;
 }
@@ -323,5 +306,20 @@ async function checkboxUpdate(receivedCheckbox,itemData) {
       received: receivedCheckbox.checked
     });
     console.log("done!");
+  })
+}
+
+async function deleteItem(deleteBtn, itemData) {
+  deleteBtn.addEventListener("click", async () => {
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      auth.currentUser.uid,
+      "wishlist",
+      itemData
+    );
+
+    await deleteDoc(wishlistItemRef);
+    window.location.reload();
   })
 }
