@@ -88,7 +88,6 @@ const wishlistFormContainer = document.getElementById("wishlist-edit");
 const wishlistForm = document.getElementById("wishlist-form");
 const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
-const deleteBtn = document.getElementById("deleteBtn");
 
 
 if (signupForm) {
@@ -195,6 +194,7 @@ if(wishlistForm) {
           priority: itemPriority,
           description: itemDescription,
           received: false,
+          reservedBy: null,
           addedDate: serverTimestamp()
         }
 
@@ -235,22 +235,34 @@ if(profileContainer) {
 }
 
 
-function createWishlistItem(itemData, itemDataid) {
+function createWishlistItem(itemData, itemDataid, vieweduid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
-  const receivedCheckbox = newItem.querySelector("#received-checkbox");
-  const deleteButton = newItem.querySelector("#deleteBtn");
+  const receivedCheckbox = newItem.querySelector(".received-checkbox");
+  const deleteButton = newItem.querySelector(".deleteBtn");
+  const reserveButton = newItem.querySelector(".reserveBtn");
+  const reservedMessage = newItem.querySelector(".reservedMsg");
   deleteButton.hidden = !isOwner; // Hide delete button if not the owner
   newItem.querySelector(".card h3 a").textContent = itemData.name;
   newItem.querySelector(".card h3 a").href = itemData.link;
   newItem.querySelector(".desc").textContent = `Description/Specification: ${itemData.description || "N/A"}`;
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
   newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
-  newItem.querySelector("#received-checkbox").checked = itemData.received;
-  newItem.querySelector("#received-checkbox").disabled = !isOwner;
+  newItem.querySelector(".received-checkbox").checked = itemData.received;
+  reservedMessage.hidden = isOwner || itemData.reservedBy === null;
+
+  const reserveOwner = itemData.reservedBy === auth.currentUser.uid;
+  const isReserved = itemData.reservedBy != null;
+  const canReserve = !isOwner && (!isReserved || reserveOwner);
+  reserveButton.hidden = !canReserve;
+  reserveButton.textContent = reserveOwner ? "Cancel Reservation" : "Reserve";
+  if(isReserved){
+  reservedMessage.textContent = "You have reserved this item to gift.";
+  }
 
   checkboxUpdate(receivedCheckbox,itemDataid);
   deleteItem(deleteButton, itemDataid);
+  reserveItem(reserveButton, itemData, itemDataid, vieweduid, reservedMessage);
 
   return newItem;
 }
@@ -264,7 +276,7 @@ async function loadWishlist() {
     snapshot.forEach((doc) => {
       const itemData = doc.data();
       itemData.id = doc.id;
-      const newItem = createWishlistItem(itemData,itemData.id);
+      const newItem = createWishlistItem(itemData, itemData.id, user.uid);
       wishlistContainer.appendChild(newItem);
     });
   }
@@ -298,17 +310,17 @@ function toJsDate(timestamp) {
   return new Date(ts);
 }
 
-async function checkboxUpdate(receivedCheckbox,itemData) {
+async function checkboxUpdate(receivedCheckbox,itemDataid) {
     receivedCheckbox.addEventListener("change", async () => {
     const wishlistItemRef = doc(
       db,
       "users",
       auth.currentUser.uid,
       "wishlist",
-      itemData
+      itemDataid
     );
 
-    console.log("Updating:", itemData);
+    console.log("Updating:", itemDataid);
 
     await updateDoc(wishlistItemRef, {
       received: receivedCheckbox.checked
@@ -317,17 +329,53 @@ async function checkboxUpdate(receivedCheckbox,itemData) {
   })
 }
 
-async function deleteItem(deleteBtn, itemData) {
+async function deleteItem(deleteBtn, itemDataid) {
   deleteBtn.addEventListener("click", async () => {
     const wishlistItemRef = doc(
       db,
       "users",
       auth.currentUser.uid,
       "wishlist",
-      itemData
+      itemDataid
     );
 
     await deleteDoc(wishlistItemRef);
     window.location.reload();
   })
+}
+
+async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reservedMsg) {
+  reserveBtn.addEventListener("click", async () => {
+
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      viewedUid,
+      "wishlist",
+      itemDataid
+    );
+
+    // Nobody has reserved it yet
+    if (itemData.reservedBy == null) {
+
+    await updateDoc(wishlistItemRef, {
+        reservedBy: auth.currentUser.uid
+    });
+
+    itemData.reservedBy = auth.currentUser.uid;
+    reserveBtn.textContent = "Cancel Reservation";
+    reservedMsg.textContent = "You have reserved this item to gift.";
+    reservedMsg.hidden = false;
+
+    } else if (itemData.reservedBy === auth.currentUser.uid) {
+
+        await updateDoc(wishlistItemRef, {
+            reservedBy: null
+        });
+
+        itemData.reservedBy = null;
+        reserveBtn.textContent = "Reserve";
+        reservedMsg.hidden = true;
+    } 
+  });
 }
