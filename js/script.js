@@ -38,6 +38,7 @@ if (themeToggle) {
   import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import {
   doc,
+  getDoc,
   setDoc,
   addDoc,
   updateDoc,
@@ -121,6 +122,7 @@ if (signupForm) {
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const errorMessage = document.getElementById("error-message");
     const email = loginForm["login-email"].value;
     const password = loginForm["login-password"].value;
 
@@ -129,7 +131,22 @@ if (loginForm) {
       const user = userCredential.user;
       console.log("User logged in:", user);
     } catch (error) {
-      console.error(error);
+      switch (error.code) {
+        case "auth/invalid-credential":
+          errorMessage.textContent = "Invalid email or password. Please try again.";
+          break;
+
+        case "auth/network-request-failed":
+          errorMessage.textContent = "Unable to connect. Check your internet connection.";
+          break;
+
+        case "auth/too-many-requests":
+          errorMessage.textContent = "Too many failed attempts. Please try again later.";
+          break;
+
+        default:
+          errorMessage.textContent = "Something went wrong. Please try again.";
+      }
     }
   });
 }
@@ -222,11 +239,12 @@ onAuthStateChanged(auth, (user) => {
     const uidToLoad = viewedUid || user.uid;
 
     isOwner = uidToLoad === user.uid;
+    if(wishlistContainer){
+      loadWishlist(uidToLoad);
 
-    loadWishlist(uidToLoad);
-
-    if (!isOwner) {
-      wishlistFormContainer.hidden = true;
+      if (!isOwner) {
+        wishlistFormContainer.hidden = true;
+      }
     }
 });
 
@@ -270,8 +288,16 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
 async function loadWishlist() {
   const user = viewedUid ? { uid: viewedUid } : auth.currentUser;
   if (user) {
+    const wishlistName = document.getElementById("wishlist-name");
     const wishlistRef = collection(db, "users", user.uid, "wishlist");
     const snapshot = await getDocs(wishlistRef);
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        const username = userSnap.data().username;
+        wishlistName.textContent = username +"'s Wishlist";
+    }
 
     snapshot.forEach((doc) => {
       const itemData = doc.data();
