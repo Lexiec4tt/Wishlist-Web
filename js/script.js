@@ -3,6 +3,7 @@
 const settingsBtn = document.getElementById("settingsBtn");
 const settingsMenu = document.getElementById("settingsMenu");
 const themeToggle = document.getElementById("theme-toggle");
+const savedTheme = localStorage.getItem("theme");
 
 if (settingsBtn) {
   settingsBtn.addEventListener("click", () => {
@@ -10,12 +11,19 @@ if (settingsBtn) {
   });
 }
 
+if(savedTheme === "dark"){
+  document.body.classList.add("dark");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     if (document.body.classList.contains("dark")) {
+      localStorage.setItem("theme","dark");
       themeToggle.textContent = "☀️ Light Mode";
     } else {
+      localStorage.setItem("theme","light");
       themeToggle.textContent = "🌙 Dark Mode";
 		}
 	});
@@ -28,11 +36,24 @@ if (themeToggle) {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-  import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-  import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-  import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-  import { signOut} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  doc,
+  setDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -63,8 +84,9 @@ const loginSection = document.getElementById("login");
 const recentlyAddedSection = document.querySelector(".recently-added");
 const loggedout = document.getElementById("logged-out");
 const wishlistContainer = document.getElementById("wishlist-container");
-const wishlistForm = document.getElementById("wishlist-edit");
-const profileContainer = document.getElementById("profile-container");
+const wishlistFormContainer = document.getElementById("wishlist-edit");
+const wishlistForm = document.getElementById("wishlist-form");
+const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
 
 
@@ -84,9 +106,10 @@ if (signupForm) {
     await setDoc(userDocRef, {
       username: username,
       email: email,
-      joined: new Date() 
+      joined: serverTimestamp()
     });
-    // You can also store the username in Firestore if needed
+    
+    window.location.href = "index.html";
   } catch (error) {
     console.error(error);
   }
@@ -116,51 +139,43 @@ if (logoutBtn) {
     try {
       await signOut(auth);
       console.log("User logged out");
+      window.location.reload();
     } catch (error) {
       console.error(error);
     } 
 });
 }
 
-if(loggedout) {
-  if(wishlistContainer) {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      wishlistContainer.hidden = false;
-      wishlistForm.hidden = false;
-      loggedout.hidden = true;
-    } else {
-      wishlistContainer.hidden = true;
-      wishlistForm.hidden = true; 
-      loggedout.hidden = false;
+onAuthStateChanged(auth, (user) => {
+
+    const loggedIn = !!user;
+
+    if (logoutBtn) {
+      logoutBtn.hidden = !loggedIn;
     }
-  });
-  }
-  else if(profileContainer) {
-    onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user);
-      if (user) {
-        profileContainer.hidden = false;
-        loggedout.hidden = true;
-      } else {
-        profileContainer.hidden = true;
-        loggedout.hidden = false;
-      }
-    });
-  }
-} else if(recentlyAddedSection) {
-  onAuthStateChanged(auth, (user) => {
-    if(user) {
-      recentlyAddedSection.hidden = false;
-      loginSection.hidden = true;
-      logoutBtn.hidden = false;
-    } else {
-      recentlyAddedSection.hidden = true;
-      loginSection.hidden = false;
-      logoutBtn.hidden = true;
+
+    if (wishlistContainer) {
+        wishlistContainer.hidden = !loggedIn;
+        wishlistFormContainer.hidden = !loggedIn;
+        loggedout.hidden = loggedIn;
     }
-  });
-}
+
+    if (profileContainer) {
+        profileContainer.hidden = !loggedIn;
+        loggedout.hidden = loggedIn;
+    }
+
+    if (recentlyAddedSection) {
+        recentlyAddedSection.hidden = !loggedIn;
+        loginSection.hidden = loggedIn;
+    }
+
+});
+
+const params = new URLSearchParams(window.location.search);
+const viewedUid = params.get("user");
+
+console.log("Viewed UID:", viewedUid);
 
 if(wishlistForm) {
   wishlistForm.addEventListener("submit", async (e) => {
@@ -168,18 +183,30 @@ if(wishlistForm) {
     const itemName = wishlistForm["item-name"].value;
     const itemLink = wishlistForm["item-link"].value;
     const itemPriority = wishlistForm["item-priority"].value;
-    const itemReceived = false; // Default value for received status
+    const itemDescription = wishlistForm["item-desc"].value;
 
     try {
       const user = auth.currentUser;
       if (user) {
-        const wishlistItemRef = doc(db, "users", user.uid, "wishlist", itemName);
-        await setDoc(wishlistItemRef, {
+        const itemData = {
           name: itemName,
           link: itemLink,
           priority: itemPriority,
-          received: itemReceived
-        });
+          description: itemDescription,
+          received: false,
+          reservedBy: null,
+          addedDate: serverTimestamp()
+        }
+
+        const wishlistItemRef = collection(db, "users", user.uid, "wishlist");
+        const docRef = await addDoc(wishlistItemRef, itemData);
+        console.log("Item added to wishlist");
+
+        itemData.id = docRef.id;
+
+        const newItem = createWishlistItem(itemData, itemData.id);
+        wishlistContainer.appendChild(newItem);
+
       }
     } catch (error) {
       console.error(error);
@@ -187,28 +214,168 @@ if(wishlistForm) {
   });
 }
 
-function createWishlistItemElement(itemData) {
+let isOwner = false;
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) return;
+    const uidToLoad = viewedUid || user.uid;
+
+    isOwner = uidToLoad === user.uid;
+
+    loadWishlist(uidToLoad);
+
+    if (!isOwner) {
+      wishlistFormContainer.hidden = true;
+    }
+});
+
+if(profileContainer) {
+  loadProfiles();
+}
+
+
+function createWishlistItem(itemData, itemDataid, vieweduid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
-  const deleteButton = newItem.querySelector("#deleteBtn");
+  const receivedCheckbox = newItem.querySelector(".received-checkbox");
+  const deleteButton = newItem.querySelector(".deleteBtn");
+  const reserveButton = newItem.querySelector(".reserveBtn");
+  const reservedMessage = newItem.querySelector(".reservedMsg");
+  deleteButton.hidden = !isOwner; // Hide delete button if not the owner
   newItem.querySelector(".card h3 a").textContent = itemData.name;
   newItem.querySelector(".card h3 a").href = itemData.link;
   newItem.querySelector(".desc").textContent = `Description/Specification: ${itemData.description || "N/A"}`;
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
-  newItem.querySelector(".date").textContent = `Added: ${itemData.addedDate.toDate().toLocaleDateString()}`;
-  newItem.querySelector("input[type='checkbox']").checked = itemData.received;
+  newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
+  newItem.querySelector(".received-checkbox").checked = itemData.received;
+  reservedMessage.hidden = isOwner || itemData.reservedBy === null;
+
+  const reserveOwner = itemData.reservedBy === auth.currentUser.uid;
+  const isReserved = itemData.reservedBy != null;
+  const canReserve = !isOwner && (!isReserved || reserveOwner);
+  reserveButton.hidden = !canReserve;
+  reserveButton.textContent = reserveOwner ? "Cancel Reservation" : "Reserve";
+  if(isReserved){
+  reservedMessage.textContent = "You have reserved this item to gift.";
+  }
+
+  checkboxUpdate(receivedCheckbox,itemDataid);
+  deleteItem(deleteButton, itemDataid);
+  reserveItem(reserveButton, itemData, itemDataid, vieweduid, reservedMessage);
+
   return newItem;
+}
+
+async function loadWishlist() {
+  const user = viewedUid ? { uid: viewedUid } : auth.currentUser;
+  if (user) {
+    const wishlistRef = collection(db, "users", user.uid, "wishlist");
+    const snapshot = await getDocs(wishlistRef);
+
+    snapshot.forEach((doc) => {
+      const itemData = doc.data();
+      itemData.id = doc.id;
+      const newItem = createWishlistItem(itemData, itemData.id, user.uid);
+      wishlistContainer.appendChild(newItem);
+    });
+  }
 }
 
 function createProfileCard(user, uid) {
 
-    const template = document.getElementById("profile-template");
+    const template = document.querySelector(".profile-template");
     const clone = template.content.cloneNode(true);
 
-    clone.querySelector(".profile-name").textContent = user.username;
-    clone.querySelector(".profile-link").href =
-        `wishlist.html?user=${uid}`;
+    clone.querySelector(".profile-name").textContent = user.username + "'s Wishlist";
+    clone.querySelector(".card-link").href = `wishlist.html?user=${uid}`;
 
     return clone;
 }
 
+async function loadProfiles() {
+  console.log("Loading profiles...");
+  const usersRef = collection(db, "users");
+  const snapshot = await getDocs(usersRef);
+
+  snapshot.forEach((doc) => {
+    const userData = { uid: doc.id, ...doc.data() };
+    const profileCard = createProfileCard(userData, doc.id);
+    profileContainer.appendChild(profileCard);
+  });
+}
+
+function toJsDate(timestamp) {
+  const ts = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+  return new Date(ts);
+}
+
+async function checkboxUpdate(receivedCheckbox,itemDataid) {
+    receivedCheckbox.addEventListener("change", async () => {
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      auth.currentUser.uid,
+      "wishlist",
+      itemDataid
+    );
+
+    console.log("Updating:", itemDataid);
+
+    await updateDoc(wishlistItemRef, {
+      received: receivedCheckbox.checked
+    });
+    console.log("done!");
+  })
+}
+
+async function deleteItem(deleteBtn, itemDataid) {
+  deleteBtn.addEventListener("click", async () => {
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      auth.currentUser.uid,
+      "wishlist",
+      itemDataid
+    );
+
+    await deleteDoc(wishlistItemRef);
+    window.location.reload();
+  })
+}
+
+async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reservedMsg) {
+  reserveBtn.addEventListener("click", async () => {
+
+    const wishlistItemRef = doc(
+      db,
+      "users",
+      viewedUid,
+      "wishlist",
+      itemDataid
+    );
+
+    // Nobody has reserved it yet
+    if (itemData.reservedBy == null) {
+
+    await updateDoc(wishlistItemRef, {
+        reservedBy: auth.currentUser.uid
+    });
+
+    itemData.reservedBy = auth.currentUser.uid;
+    reserveBtn.textContent = "Cancel Reservation";
+    reservedMsg.textContent = "You have reserved this item to gift.";
+    reservedMsg.hidden = false;
+
+    } else if (itemData.reservedBy === auth.currentUser.uid) {
+
+        await updateDoc(wishlistItemRef, {
+            reservedBy: null
+        });
+
+        itemData.reservedBy = null;
+        reserveBtn.textContent = "Reserve";
+        reservedMsg.hidden = true;
+    } 
+  });
+}

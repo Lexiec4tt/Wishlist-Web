@@ -39,14 +39,16 @@
 				
 				<section id="wishlist-container" hidden>
 					<template id="wishlist-template">
-						<article class="card">
+						<article class="card template">
 							<h3><a class="Item-link" href=#>Item Name</a></h3>
 							<p class="desc">Description/Specification:</p>
 							<p class="priority">Priority level:</p>
 							<small class="date">Added:</small>
-								<label class="received-check">
-									<input type="checkbox" disabled>Received</label>
-								<button id="deleteBtn" hidden>Delete</button>	
+								<label>
+									<input type="checkbox" class="received-checkbox" disabled>Received</label>
+								<button class="deleteBtn" hidden>Delete</button>
+								<button class="reserveBtn" hidden>Reserve</button>	
+							<p class="reservedMsg" hidden>This item has been reserved by someone else to gift!</p>
 						</article>
 					</template>
 				</section>
@@ -58,13 +60,14 @@
 						<input type="text" id="item-name" name="item-name" required>
 						<label for="item-link">Item link:</label>
 						<input type="url" id="item-link" name="item-link" placeholder="https://..." required>
-						<label for="desc">Description/Specification:</label>
+						<label for="item-desc">Description/Specification:</label>
 						<input type="text" id="item-desc" name="item-desc">
 						<label for="priority">Priority Level:</label>
-						<select id="priority">
-							<option>Low</option>
-							<option>Medium</option>
-							<option>High</option>
+						<select id="priority" name="item-priority" required>
+							<option value="" disabled selected>Select a priority</option>
+							<option value="low">Low</option>
+							<option value="medium">Medium</option>
+							<option value="high">High</option>
 						</select>
 						<button type="submit">Add Item</button>
 					</form>
