@@ -269,6 +269,8 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   deleteButton.hidden = !isOwner; // Hide delete button if not the owner
   newItem.querySelector(".card h3 a").textContent = itemData.name;
   newItem.querySelector(".card h3 a").href = itemData.link;
+  newItem.querySelector(".card h3 a").target = "_blank";
+  newItem.querySelector(".card h3 a").rel = "noopener noreferrer";
   newItem.querySelector(".desc").textContent = `Description/Specification: ${itemData.description || "N/A"}`;
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
   newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
