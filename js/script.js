@@ -193,10 +193,10 @@ onAuthStateChanged(auth, (user) => {
         loggedout.hidden = loggedIn;
     }
 
-    if (recentlyAddedSection) {
-        recentlyAddedSection.hidden = !loggedIn;
+    if (loginSection) {
         loginSection.hidden = loggedIn;
     }
+
 
     if (!user) return;
     const uidToLoad = viewedUid || user.uid;
