@@ -45,7 +45,11 @@ import {
   deleteDoc,
   collection,
   getDocs,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  orderBy,
+  limit,
+  startAfter
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import {
@@ -55,6 +59,7 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -89,6 +94,12 @@ const wishlistFormContainer = document.getElementById("wishlist-edit");
 const wishlistForm = document.getElementById("wishlist-form");
 const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
+const usernameCache = new Map();
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+let lastVisible = null;
+let currentWishlistuid = null;
+const pageSize = 20;
+let isOwner = false;
 
 
 if (signupForm) {
@@ -187,12 +198,22 @@ onAuthStateChanged(auth, (user) => {
         loginSection.hidden = loggedIn;
     }
 
+    if (!user) return;
+    const uidToLoad = viewedUid || user.uid;
+
+    isOwner = uidToLoad === user.uid;
+    if(wishlistContainer){
+      loadWishlist(uidToLoad);
+
+      if (!isOwner) {
+        wishlistFormContainer.hidden = true;
+      }
+    }
+
 });
 
 const params = new URLSearchParams(window.location.search);
 const viewedUid = params.get("user");
-
-console.log("Viewed UID:", viewedUid);
 
 if(wishlistForm) {
   wishlistForm.addEventListener("submit", async (e) => {
@@ -231,22 +252,7 @@ if(wishlistForm) {
   });
 }
 
-let isOwner = false;
 
-onAuthStateChanged(auth, (user) => {
-
-    if (!user) return;
-    const uidToLoad = viewedUid || user.uid;
-
-    isOwner = uidToLoad === user.uid;
-    if(wishlistContainer){
-      loadWishlist(uidToLoad);
-
-      if (!isOwner) {
-        wishlistFormContainer.hidden = true;
-      }
-    }
-});
 
 if(profileContainer) {
   loadProfiles();
@@ -285,27 +291,83 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   return newItem;
 }
 
-async function loadWishlist() {
-  const user = viewedUid ? { uid: viewedUid } : auth.currentUser;
+/*async function loadWishlist(uid) {
+  const user = uid;
   if (user) {
-    const wishlistName = document.getElementById("wishlist-name");
-    const wishlistRef = collection(db, "users", user.uid, "wishlist");
-    const snapshot = await getDocs(wishlistRef);
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+    wishlistContainer.replaceChildren(); 
 
-    if (userSnap.exists()) {
-        const username = userSnap.data().username;
-        wishlistName.textContent = username +"'s Wishlist";
-    }
+    const wishlistName = document.getElementById("wishlist-name");
+    const wishlistRef = collection(db, "users", user, "wishlist");
+    const snapshot = await getDocs(wishlistRef);
+    
+    wishlistName.textContent = `${await getUsername(uid)}'s Wishlist`;
 
     snapshot.forEach((doc) => {
       const itemData = doc.data();
       itemData.id = doc.id;
-      const newItem = createWishlistItem(itemData, itemData.id, user.uid);
+      const newItem = createWishlistItem(itemData, itemData.id, user);
       wishlistContainer.appendChild(newItem);
     });
   }
+}*/
+
+async function loadWishlist(uid) {
+
+  if (!uid) return;
+
+  wishlistContainer.replaceChildren();
+  lastVisible = null;
+
+  const wishlistName = document.getElementById("wishlist-name");
+  wishlistName.textContent = `${await getUsername(uid)}'s Wishlist`;
+
+  await loadWishlistPage(uid);
+}
+
+async function loadWishlistPage(uid) {
+
+  const wishlistRef = collection(db, "users", uid, "wishlist");
+
+  let wishlistQuery;
+
+  if (lastVisible) {
+    wishlistQuery = query(
+      wishlistRef,
+      orderBy("addedDate", "desc"),
+      startAfter(lastVisible),
+      limit(pageSize)
+    );
+  } else {
+    wishlistQuery = query(
+      wishlistRef,
+      orderBy("addedDate", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  const snapshot = await getDocs(wishlistQuery);
+
+  snapshot.forEach((doc) => {
+    const itemData = doc.data();
+    itemData.id = doc.id;
+
+    const newItem = createWishlistItem(itemData, itemData.id, uid);
+    wishlistContainer.appendChild(newItem);
+  });
+
+  lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
+
+  loadMoreBtn.hidden = snapshot.size < pageSize;
+}
+
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", async () => {
+
+    const uid = viewedUid || auth.currentUser.uid;
+
+    await loadWishlistPage(uid);
+
+  });
 }
 
 function createProfileCard(user, uid) {
@@ -366,7 +428,7 @@ async function deleteItem(deleteBtn, itemDataid) {
     );
 
     await deleteDoc(wishlistItemRef);
-    window.location.reload();
+    deleteBtn.closest(".card").remove();
   })
 }
 
@@ -404,4 +466,22 @@ async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reserved
         reservedMsg.hidden = true;
     } 
   });
+}
+
+async function getUsername(uid) {
+
+  if (usernameCache.has(uid)) {
+    return usernameCache.get(uid);
+  }
+
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) return "Unknown";
+
+  const username = userSnap.data().username;
+
+  usernameCache.set(uid, username);
+
+  return username;
 }
