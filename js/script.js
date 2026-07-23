@@ -158,6 +158,7 @@ if (loginForm) {
         default:
           errorMessage.textContent = "Something went wrong. Please try again.";
       }
+      errorMessage.hidden = false;
     }
   });
 }
