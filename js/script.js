@@ -273,6 +273,7 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
   newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
   newItem.querySelector(".received-checkbox").checked = itemData.received;
+  receivedCheckbox.disabled = !isOwner;
   reservedMessage.hidden = isOwner || itemData.reservedBy === null;
 
   const reserveOwner = itemData.reservedBy === auth.currentUser.uid;
