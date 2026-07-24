@@ -33,13 +33,18 @@ body {
 #main-header {
 	background-color: var(--header-bg-color);
 	height: 5rem;
-	align-content: center;
+	align-items: center; 
 	position: sticky;
+	margin: 0;
+	display: flex;
+	flex-direction: row;
+	border-bottom: 2px solid var(--font-color);
+	top: 0;
+	z-index: 1;
 }
 
 header h1{
-	text-align:right;
-	margin: 0;
+	margin-left: auto;
 }
 
 #welcome {
@@ -66,6 +71,7 @@ main {
 	flex-wrap: wrap;
     gap: 20px;
 }
+
 .template {
 	transition: transform 0.2s ease,
 				box-shadow 0.2s ease;	
@@ -75,35 +81,31 @@ main {
 	transform: translateY(-5px) scale(1.1);	 
 }
 
-aside {
-	width: 250px;
-	min-height: 100vh;
-	background-image: var(--extra-color),var(--aside-bg-image);
-	background-size: cover;
-	position: sticky;
-}
 
 nav ul {
+	display: flex;
+	margin-right: 1.5rem;
+	padding-right: 1rem;
 	list-style-type: none;
 	text-align: left;
 }
 
 nav a {
 	text-decoration: none;
-	font-size: 1.5rem;
-	line-height: 3rem;
+	font-size: 1rem;
 	color: inherit;
+	margin-left: 1rem;
 }
 
 #settingsBtn {
 	background: none;
     border: none;
-    padding: 0;
+    padding-left: 1rem;
     text-decoration: none;
-	font-size: 1.5rem;
-	line-height: 3rem;
+	font-size: inherit;
     cursor: pointer;
 	color: inherit;
+	margin-left: 0.25rem;
 }
 
 .dropdown-menu button {
@@ -111,13 +113,34 @@ nav a {
     border: none;
     padding: 0;
     text-decoration: none;
-	font-size: 1.5rem;
-	line-height: 2rem;
+	font-size: inherit;
+	line-height: inherit;
     cursor: pointer;
 	color: inherit;
+	
+    display: block; 
+
 }
 
-.dropdown-menu,.received-check{
+.dropdown-menu {
+    position: absolute;
+	top: 100%;
+
+	display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    background: var(--header-bg-color);
+    border: 1px solid var(--font-color);
+    border-radius: 10px;
+    padding: 0.5rem;
+    min-width: 180px;
+
+    z-index: 100;
+
+}
+
+.received-check{
     display: block;
 }
 
@@ -148,9 +171,14 @@ a {
 	color:var(--font-color);
 }
 
-#wishlist-container {
+#wishlist-container, #get-started-container, #explore-container {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	flex-direction: row;
+	gap: 4rem;
+}
+
+#get-started-container h3 {
+	text-align: center;
 }
