@@ -96,7 +96,9 @@ const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
 const usernameCache = new Map();
 const loadMoreBtn = document.getElementById("loadMoreBtn");
-const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), explore: document.getElementById("exploreCard") }
+const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), explore: document.getElementById("exploreCard"),
+  rules: document.getElementById("guidelines")
+ }
 const getStartedHeader = document.getElementById("get-started-header");
 
 let lastVisible = null;
@@ -203,6 +205,7 @@ onAuthStateChanged(auth, (user) => {
         getStartedHeader.hidden = !loggedIn;
         getStartedLinks.wishlist.hidden = !loggedIn;
         getStartedLinks.explore.hidden = !loggedIn;
+        getStartedLinks.rules.hidden = !loggedIn;
     }
 
 
