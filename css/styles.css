@@ -170,7 +170,7 @@ a {
 	flex-wrap: wrap;
 	justify-content: center;
 	flex-direction: row;
-	gap: 4rem;
+	gap: 3rem;
 }
 
 #get-started-container h3 {

@@ -96,6 +96,9 @@ const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
 const usernameCache = new Map();
 const loadMoreBtn = document.getElementById("loadMoreBtn");
+const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), explore: document.getElementById("exploreCard") }
+const getStartedHeader = document.getElementById("get-started-header");
+
 let lastVisible = null;
 let currentWishlistuid = null;
 const pageSize = 20;
@@ -175,6 +178,7 @@ if (logoutBtn) {
 });
 }
 
+
 onAuthStateChanged(auth, (user) => {
 
     const loggedIn = !!user;
@@ -196,6 +200,9 @@ onAuthStateChanged(auth, (user) => {
 
     if (loginSection) {
         loginSection.hidden = loggedIn;
+        getStartedHeader.hidden = !loggedIn;
+        getStartedLinks.wishlist.hidden = !loggedIn;
+        getStartedLinks.explore.hidden = !loggedIn;
     }
 
 
