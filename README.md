@@ -1,7 +1,7 @@
 WISHLIST WEBSITEEE
 
-This is my first personal project, so the code may be a bit rough on the edges.
-Feaures:
+This is my first personal project, so the code may be a bit rough on the edges.<br>
+Features:
  - Adding wishlists
  - Viewing other wishlists
  - Deleting wishlist items
