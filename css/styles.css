@@ -1,19 +1,17 @@
 
 .dark {
-	--bg-image: url("https://i.pinimg.com/736x/c9/fa/cd/c9facd028f6767c827106f7d6b613412.jpg");
-	--aside-bg-image: url("https://i.pinimg.com/736x/13/80/79/138079e6790fde58f59a8b8a4f0c7b67.jpg");
+	--bg-color: #1a1a00;
 	--header-bg-color: #3C204F;
 	--font-color: #F4FFA3;
-	--bg-color: #3F6B1A;
+	--bg-card-color: #3F6B1A;
 	--extra-color:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
 }
 
 :root {
-	--bg-image: url("https://i.pinimg.com/736x/59/7b/29/597b29c8fff122df214eaa41f07564d5.jpg");
-	--aside-bg-image: url("https://i.pinimg.com/736x/0e/3e/87/0e3e87a2b3beac6e46cef3cbbf72eada.jpg");
+	--bg-color: #FFBAD5;
 	--header-bg-color: #D2E8AC;
 	--font-color: #3F2252;
-	--bg-color: #DAB8F2;
+	--bg-card-color: #DAB8F2;
 	--extra-color:linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
 }
 
@@ -21,7 +19,7 @@ body {
 	font-family: "Fredoka", sans-serif;
 	color: var(--font-color);
 	margin: 0;
-	background-image: var(--bg-image);
+	background-color: var(--bg-color);
 	background-size: cover;
 }
 
@@ -61,7 +59,7 @@ main {
 
 .card {
 	margin: .75rem auto;
-	background-color: var(--bg-color);
+	background-color: var(--bg-card-color);
 	padding: 2rem;
 	border-radius: 20px;
 	box-shadow: 5px 5px 10px var(--font-color);
@@ -179,3 +177,66 @@ a {
 	text-align: center;
 }
 
+@media (max-width: 768px) {
+
+	#main-header {
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        padding: 1rem;
+    }
+
+    header h1 {
+        margin: 0;
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
+    /* Navigation */
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 1rem 0 0;
+        padding: 0;
+        gap: 0.75rem;
+    }
+
+    nav a,
+    #settingsBtn {
+        margin: 0;
+    }
+
+    /* Cards */
+    .card {
+        width: min(90vw, 22rem);
+        padding: 1.5rem;
+    }
+
+    /* Card containers */
+    #wishlist-container,
+    #get-started-container,
+    #explore-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    /* Forms */
+    input,
+    select,
+    button {
+        font-size: 1rem;
+    }
+
+    input,
+    select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Dropdown */
+    .dropdown-menu {
+        left: 0;
+    }
+}
