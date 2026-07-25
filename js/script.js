@@ -284,7 +284,7 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   const canReserve = !isOwner && (!isReserved || reserveOwner);
   reserveButton.hidden = !canReserve;
   reserveButton.textContent = reserveOwner ? "Cancel Reservation" : "Reserve";
-  if(isReserved){
+  if(reserveOwner){
   reservedMessage.textContent = "You have reserved this item to gift.";
   }
 
@@ -294,26 +294,6 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
 
   return newItem;
 }
-
-/*async function loadWishlist(uid) {
-  const user = uid;
-  if (user) {
-    wishlistContainer.replaceChildren(); 
-
-    const wishlistName = document.getElementById("wishlist-name");
-    const wishlistRef = collection(db, "users", user, "wishlist");
-    const snapshot = await getDocs(wishlistRef);
-    
-    wishlistName.textContent = `${await getUsername(uid)}'s Wishlist`;
-
-    snapshot.forEach((doc) => {
-      const itemData = doc.data();
-      itemData.id = doc.id;
-      const newItem = createWishlistItem(itemData, itemData.id, user);
-      wishlistContainer.appendChild(newItem);
-    });
-  }
-}*/
 
 async function loadWishlist(uid) {
 
@@ -398,8 +378,13 @@ async function loadProfiles() {
 }
 
 function toJsDate(timestamp) {
-  const ts = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
-  return new Date(ts);
+    if (!timestamp?.seconds) {
+    return new Date(); // temporary fallback
+  }
+
+  return new Date(
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+  );
 }
 
 async function checkboxUpdate(receivedCheckbox,itemDataid) {
