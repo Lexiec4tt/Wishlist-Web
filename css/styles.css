@@ -177,6 +177,14 @@ a {
 	text-align: center;
 }
 
+text-area{
+	display: block;
+	overflow-wrap: break-word;
+  	resize: vertical;
+}
+
+
+
 @media (max-width: 768px) {
 
 	#main-header {
@@ -209,7 +217,7 @@ a {
 
     /* Cards */
     .card {
-        width: min(90vw, 22rem);
+        width: min(90vw, 17rem);
         padding: 1.5rem;
     }
 
@@ -220,6 +228,7 @@ a {
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
+		margin: 0 auto;
     }
 
     /* Forms */
