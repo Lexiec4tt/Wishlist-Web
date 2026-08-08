@@ -1,45 +1,8 @@
+import { db, auth } from "./firebase.js";
 
-/* more of UI stuff; toggling settings menu and theme */
-const settingsBtn = document.getElementById("settingsBtn");
-const settingsMenu = document.getElementById("settingsMenu");
-const themeToggle = document.getElementById("theme-toggle");
-const savedTheme = localStorage.getItem("theme");
-
-if (settingsBtn) {
-  settingsBtn.addEventListener("click", () => {
-    settingsMenu.classList.toggle("hidden");
-  });
-}
-
-if(savedTheme === "dark"){
-  document.body.classList.add("dark");
-  themeToggle.textContent = "☀️ Light Mode";
-}
-
-if (themeToggle) {
-  themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    if (document.body.classList.contains("dark")) {
-      localStorage.setItem("theme","dark");
-      themeToggle.textContent = "☀️ Light Mode";
-    } else {
-      localStorage.setItem("theme","light");
-      themeToggle.textContent = "🌙 Dark Mode";
-		}
-	});
-}
-/*end of UI stuff*/
-
-/*Firebase code*/
-
- // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import {
   doc,
   getDoc,
-  setDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -52,178 +15,25 @@ import {
   startAfter
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+const wishlistContainer =
+  document.getElementById("wishlist-container");
 
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+const wishlistFormContainer =
+  document.getElementById("wishlist-edit");
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyC9WQ71akGdS5KzEMXKc6hpYt0ejqcQOS4",
-    authDomain: "wishlist-database-71af3.firebaseapp.com",
-    projectId: "wishlist-database-71af3",
-    storageBucket: "wishlist-database-71af3.firebasestorage.app",
-    messagingSenderId: "674788319469",
-    appId: "1:674788319469:web:23b4ec2b9c0adacc46ece4",
-    measurementId: "G-RLKKQSWSLT"
-  };
+const wishlistForm =
+  document.getElementById("wishlist-form");
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+const loadMoreBtn =
+  document.getElementById("loadMoreBtn");
 
-/*end of firebase code generated*/
-
-/*allat firebase shmuck i needed AI to teach me */
-const signupForm = document.getElementById("signup-form");
-const loginForm = document.getElementById("login-form");
-const loginSection = document.getElementById("login");
-const recentlyAddedSection = document.querySelector(".recently-added");
-const loggedout = document.getElementById("logged-out");
-const wishlistContainer = document.getElementById("wishlist-container");
-const wishlistFormContainer = document.getElementById("wishlist-edit");
-const wishlistForm = document.getElementById("wishlist-form");
-const profileContainer = document.getElementById("explore-container");
-const logoutBtn = document.getElementById("logoutBtn");
 const usernameCache = new Map();
-const loadMoreBtn = document.getElementById("loadMoreBtn");
-const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), 
-  explore: document.getElementById("exploreCard"),
-  rules: document.getElementById("guidelines")
- }
-const getStartedHeader = document.getElementById("get-started-header");
+
+const pageSize = 20;
 
 let lastVisible = null;
-let currentWishlistuid = null;
-const pageSize = 20;
-let isOwner = false;
 let editingItemId = null;
-
-
-if (signupForm) {
-  signupForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = signupForm["signup-email"].value;
-    const username = signupForm["signup-username"].value;
-    const password = signupForm["signup-password"].value;
-
-  try {
-   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    console.log("User created:", user);
-
-    const userDocRef = doc(db, "users", user.uid)
-    await setDoc(userDocRef, {
-      username: username,
-      email: email,
-      joined: serverTimestamp()
-    });
-    
-    window.location.href = "index.html";
-  } catch (error) {
-    console.error(error);
-  }
-
-  
-});
-}
-
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const errorMessage = document.getElementById("error-message");
-    const email = loginForm["login-email"].value;
-    const password = loginForm["login-password"].value;
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log("User logged in:", user);
-    } catch (error) {
-      switch (error.code) {
-        case "auth/invalid-credential":
-          errorMessage.textContent = "Invalid email or password. Please try again.";
-          break;
-
-        case "auth/network-request-failed":
-          errorMessage.textContent = "Unable to connect. Check your internet connection.";
-          break;
-
-        case "auth/too-many-requests":
-          errorMessage.textContent = "Too many failed attempts. Please try again later.";
-          break;
-
-        default:
-          errorMessage.textContent = "Something went wrong. Please try again.";
-      }
-      errorMessage.hidden = false;
-    }
-  });
-}
-
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      console.log("User logged out");
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-    } 
-});
-}
-
-
-onAuthStateChanged(auth, (user) => {
-
-    const loggedIn = !!user;
-
-    if (logoutBtn) {
-      logoutBtn.hidden = !loggedIn;
-    }
-
-    if (wishlistContainer) {
-        wishlistContainer.hidden = !loggedIn;
-        wishlistFormContainer.hidden = !loggedIn;
-        loggedout.hidden = loggedIn;
-    }
-
-    if (profileContainer) {
-        profileContainer.hidden = !loggedIn;
-        loggedout.hidden = loggedIn;
-    }
-
-    if (loginSection) {
-        loginSection.hidden = loggedIn;
-        getStartedHeader.hidden = !loggedIn;
-        getStartedLinks.wishlist.hidden = !loggedIn;
-        getStartedLinks.explore.hidden = !loggedIn;
-        getStartedLinks.rules.hidden = !loggedIn;
-    }
-
-
-    if (!user) return;
-    const uidToLoad = viewedUid || user.uid;
-
-    isOwner = uidToLoad === user.uid;
-    if(wishlistContainer){
-      loadWishlist(uidToLoad);
-
-      if (!isOwner) {
-        wishlistFormContainer.hidden = true;
-      }
-    }
-
-});
+let isOwner = false;
 
 const params = new URLSearchParams(window.location.search);
 const viewedUid = params.get("user");
@@ -300,13 +110,6 @@ if(wishlistForm) {
   });
 }
 
-
-
-if(profileContainer) {
-  loadProfiles();
-}
-
-
 function createWishlistItem(itemData, itemDataid, vieweduid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
@@ -345,7 +148,7 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   return newItem;
 }
 
-async function loadWishlist(uid) {
+export async function loadWishlist(uid) {
 
   if (!uid) return;
 
@@ -403,29 +206,6 @@ if (loadMoreBtn) {
 
     await loadWishlistPage(uid);
 
-  });
-}
-
-function createProfileCard(user, uid) {
-
-    const template = document.querySelector(".profile-template");
-    const clone = template.content.cloneNode(true);
-
-    clone.querySelector(".profile-name").textContent = user.username + "'s Wishlist";
-    clone.querySelector(".card-link").href = `wishlist.html?user=${uid}`;
-
-    return clone;
-}
-
-async function loadProfiles() {
-  console.log("Loading profiles...");
-  const usersRef = collection(db, "users");
-  const snapshot = await getDocs(usersRef);
-
-  snapshot.forEach((doc) => {
-    const userData = { uid: doc.id, ...doc.data() };
-    const profileCard = createProfileCard(userData, doc.id);
-    profileContainer.appendChild(profileCard);
   });
 }
 
@@ -541,4 +321,8 @@ async function updateWishlistItem(editBtn,itemDataid, itemData) {
       block: "center"
     });
   });
+}
+
+export function setWishlistOwner(owner) {
+  isOwner = owner;
 }
