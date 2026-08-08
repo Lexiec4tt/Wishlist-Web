@@ -52,31 +52,36 @@ if(wishlistForm) {
 
         if (editingItemId) {
 
-          const itemRef = doc(
-            db,
-            "users",
-            user.uid,
-            "wishlist",
-            editingItemId
-          );
+            const itemRef = doc(
+                db,
+                "users",
+                user.uid,
+                "wishlist",
+                editingItemId
+            );
 
-          await updateDoc(itemRef, {
-            name: itemName,
-            link: itemLink,
-            priority: itemPriority,
-            description: itemDescription
-          });
+            await updateDoc(itemRef, {
+                name: itemName,
+                link: itemLink,
+                priority: itemPriority,
+                description: itemDescription
+            });
 
-          const card = wishlistContainer.querySelector(
-            `.card[data-id="${editingItemId}"]`
-          );
+            const card = wishlistContainer.querySelector(
+                `.card[data-id="${editingItemId}"]`
+            );
 
-          card.querySelector(".card h3 a").textContent = itemName;
-          card.querySelector(".card h3 a").href = itemLink;
-          card.querySelector(".priority").textContent =
-            `Priority level: ${itemPriority}`;
-          card.querySelector(".desc").textContent =
-            `Description/Specification: ${itemDescription}`;
+            card.querySelector(".card h3 a").textContent = itemName;
+            card.querySelector(".card h3 a").href = itemLink;
+            card.querySelector(".priority").textContent =
+                `Priority level: ${itemPriority}`;
+            card.querySelector(".desc").textContent =
+                `Description/Specification: ${itemDescription}`;
+
+            card.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
 
           editingItemId = null;
           wishlistForm.reset();
@@ -100,7 +105,7 @@ if(wishlistForm) {
 
           const newItem = createWishlistItem(itemData, itemData.id);
           wishlistContainer.appendChild(newItem);
-          WishlistForm.reset();
+          wishlistForm.reset();
 
         }
       }
