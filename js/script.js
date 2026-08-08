@@ -96,7 +96,8 @@ const profileContainer = document.getElementById("explore-container");
 const logoutBtn = document.getElementById("logoutBtn");
 const usernameCache = new Map();
 const loadMoreBtn = document.getElementById("loadMoreBtn");
-const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), explore: document.getElementById("exploreCard"),
+const getStartedLinks = { wishlist: document.getElementById("wishlistCard"), 
+  explore: document.getElementById("exploreCard"),
   rules: document.getElementById("guidelines")
  }
 const getStartedHeader = document.getElementById("get-started-header");
@@ -105,6 +106,7 @@ let lastVisible = null;
 let currentWishlistuid = null;
 const pageSize = 20;
 let isOwner = false;
+let editingItemId = null;
 
 
 if (signupForm) {
@@ -237,25 +239,60 @@ if(wishlistForm) {
     try {
       const user = auth.currentUser;
       if (user) {
-        const itemData = {
-          name: itemName,
-          link: itemLink,
-          priority: itemPriority,
-          description: itemDescription,
-          received: false,
-          reservedBy: null,
-          addedDate: serverTimestamp()
+
+        if (editingItemId) {
+
+          const itemRef = doc(
+            db,
+            "users",
+            user.uid,
+            "wishlist",
+            editingItemId
+          );
+
+          await updateDoc(itemRef, {
+            name: itemName,
+            link: itemLink,
+            priority: itemPriority,
+            description: itemDescription
+          });
+
+          const card = wishlistContainer.querySelector(
+            `.card[data-id="${editingItemId}"]`
+          );
+
+          card.querySelector(".card h3 a").textContent = itemName;
+          card.querySelector(".card h3 a").href = itemLink;
+          card.querySelector(".priority").textContent =
+            `Priority level: ${itemPriority}`;
+          card.querySelector(".desc").textContent =
+            `Description/Specification: ${itemDescription}`;
+
+          editingItemId = null;
+          wishlistForm.reset();
+
+        } else {  
+          const itemData = {
+            name: itemName,
+            link: itemLink,
+            priority: itemPriority,
+            description: itemDescription,
+            received: false,
+            reservedBy: null,
+            addedDate: serverTimestamp()
+          }
+
+          const wishlistItemRef = collection(db, "users", user.uid, "wishlist");
+          const docRef = await addDoc(wishlistItemRef, itemData);
+          console.log("Item added to wishlist");
+
+          itemData.id = docRef.id;
+
+          const newItem = createWishlistItem(itemData, itemData.id);
+          wishlistContainer.appendChild(newItem);
+          WishlistForm.reset();
+
         }
-
-        const wishlistItemRef = collection(db, "users", user.uid, "wishlist");
-        const docRef = await addDoc(wishlistItemRef, itemData);
-        console.log("Item added to wishlist");
-
-        itemData.id = docRef.id;
-
-        const newItem = createWishlistItem(itemData, itemData.id);
-        wishlistContainer.appendChild(newItem);
-
       }
     } catch (error) {
       console.error(error);
@@ -273,11 +310,14 @@ if(profileContainer) {
 function createWishlistItem(itemData, itemDataid, vieweduid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
+  newItem.querySelector(".card").dataset.id = itemDataid;
   const receivedCheckbox = newItem.querySelector(".received-checkbox");
   const deleteButton = newItem.querySelector(".deleteBtn");
   const reserveButton = newItem.querySelector(".reserveBtn");
   const reservedMessage = newItem.querySelector(".reservedMsg");
+  const editButton = newItem.querySelector(".editBtn");
   deleteButton.hidden = !isOwner; // Hide delete button if not the owner
+  editButton.hidden = !isOwner; // Hide edit button if not the owner
   newItem.querySelector(".card h3 a").textContent = itemData.name;
   newItem.querySelector(".card h3 a").href = itemData.link;
   newItem.querySelector(".card h3 a").target = "_blank";
@@ -301,7 +341,7 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   checkboxUpdate(receivedCheckbox,itemDataid);
   deleteItem(deleteButton, itemDataid);
   reserveItem(reserveButton, itemData, itemDataid, vieweduid, reservedMessage);
-
+  updateWishlistItem(editButton, itemDataid, itemData);
   return newItem;
 }
 
@@ -483,4 +523,20 @@ async function getUsername(uid) {
   usernameCache.set(uid, username);
 
   return username;
+}
+
+async function updateWishlistItem(editBtn,itemDataid, itemData) {
+  editBtn.addEventListener("click", async () => {
+    editingItemId = itemDataid;
+
+    wishlistForm["item-name"].value = itemData.name;
+    wishlistForm["item-link"].value = itemData.link;
+    wishlistForm["item-priority"].value = itemData.priority;
+    wishlistForm["item-desc"].value = itemData.description || "";
+
+    wishlistForm.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
 }
