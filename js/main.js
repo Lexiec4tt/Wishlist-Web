@@ -71,7 +71,7 @@ onAuthStateChanged(auth, (user) => {
     if(wishlistContainer){
       loadWishlist(uidToLoad);
 
-      if (!isOwner) {
+      if (!owner) {
         wishlistFormContainer.hidden = true;
       }
     }
