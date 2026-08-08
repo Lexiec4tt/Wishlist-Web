@@ -105,7 +105,7 @@ if(wishlistForm) {
 
           const newItem = createWishlistItem(itemData, itemData.id);
           wishlistContainer.appendChild(newItem);
-          wishlistForm.reset();
+          WishlistForm.reset();
 
         }
       }
