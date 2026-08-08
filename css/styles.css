@@ -1,9 +1,10 @@
 
 .dark {
-	--bg-color: #1a1a00;
+	--bg-color: #202f22;
 	--header-bg-color: #3C204F;
-	--font-color: #F4FFA3;
-	--bg-card-color: #3F6B1A;
+	--font-color: #e0e8a7;
+	--bg-card-color: #4c623a;
+	--bg-card-shadow-color: #0b1402;
 	--extra-color:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
 }
 
@@ -12,6 +13,7 @@
 	--header-bg-color: #D2E8AC;
 	--font-color: #3F2252;
 	--bg-card-color: #DAB8F2;
+	--bg-card-shadow-color: #44265f;
 	--extra-color:linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
 }
 
@@ -62,7 +64,7 @@ main {
 	background-color: var(--bg-card-color);
 	padding: 2rem;
 	border-radius: 20px;
-	box-shadow: 5px 5px 10px var(--font-color);
+	box-shadow: 5px 5px 10px var(--bg-card-shadow-color);
 	width: min(17rem, 90vw);
 }
 
@@ -165,6 +167,9 @@ a {
 	color:var(--font-color);
 }
 
+#welcome {
+	padding: 0 1rem;
+}
 #wishlist-container, #get-started-container, #explore-container {
 	display: flex;
 	flex-wrap: wrap;
