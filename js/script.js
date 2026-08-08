@@ -367,6 +367,7 @@ async function loadWishlistPage(uid) {
   if (lastVisible) {
     wishlistQuery = query(
       wishlistRef,
+      orderBy("received", "asc"),
       orderBy("addedDate", "desc"),
       startAfter(lastVisible),
       limit(pageSize)
@@ -374,6 +375,7 @@ async function loadWishlistPage(uid) {
   } else {
     wishlistQuery = query(
       wishlistRef,
+      orderBy("received", "asc"),
       orderBy("addedDate", "desc"),
       limit(pageSize)
     );
