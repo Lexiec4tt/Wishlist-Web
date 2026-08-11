@@ -9,9 +9,15 @@ import {
 
 import {
   doc,
+  getDoc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
 
 const signupForm = document.getElementById("signup-form");
 const loginForm = document.getElementById("login-form");
@@ -23,13 +29,24 @@ if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = signupForm["signup-email"].value;
-    const username = signupForm["signup-username"].value;
+    const username = signupForm["signup-username"].value.trim();
+    const usernameLower = username.toLowerCase();
     const password = signupForm["signup-password"].value;
 
   try {
-   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+    const usernameDoc = await getDoc(
+      doc(db, "usernames", usernameLower)
+    );
+
+    if (usernameDoc.exists()) {
+      const error = new Error("User already Taken");
+      error.code = "username-taken";
+      throw error;
+    }
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    console.log("User created:", user);
 
     const userDocRef = doc(db, "users", user.uid)
     await setDoc(userDocRef, {
@@ -37,13 +54,26 @@ if (signupForm) {
       email: email,
       joined: serverTimestamp()
     });
+    await setDoc(doc(db, "usernames", usernameLower), {
+      uid: user.uid
+    });
     
     window.location.href = "index.html";
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    const errorMessage = document.getElementById("error-message");
+    switch (error.code) {
+      case "auth/email-already-in-use":
+        errorMessage.textContent = "That email is already in use. Please try another.";
+        break;
+      case "username-taken":
+        errorMessage.textContent = "That username is already taken. Please try another.";
+        break;
+      default:
+        errorMessage.textContent = "Something went wrong. Please try again.";
+    }
+    errorMessage.hidden = false;
   }
-
-  
 });
 }
 
