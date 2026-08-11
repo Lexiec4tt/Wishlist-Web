@@ -1,22 +1,22 @@
 
 .dark {
-	--bg-color: #202f22;
-	--header-bg-color: #3C204F;
-	--font-color: #e0e8a7;
-	--bg-card-color: #4c623a;
+	--bg-color: #2e372e;
+	--header-bg-color: #1d2e28;
+	--font-color: #cbcfa0;
+	--bg-card-color: #433a62;
 	--bg-card-shadow-color: #0b1402;
-	--bg-card-border-color: #383e32;
+	--bg-card-border-color: #38323e;
 	--extra-color:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
 }
 
 :root {
-	--bg-color: #FFBAD5;
-	--header-bg-color: #D2E8AC;
+	--bg-color: #e9cfff;
+	--header-bg-color: #c5a3ff;
 	--font-color: #3F2252;
-	--bg-card-color: #DAB8F2;
+	--bg-card-color: #f7aef8;
 	--bg-card-shadow-color: #44265f;
 	--bg-card-border-color: #48285e;
-	--extra-color:linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+	--extra-color: #bc98ff;
 }
 
 body {
@@ -24,7 +24,6 @@ body {
 	color: var(--font-color);
 	margin: 0;
 	background-color: var(--bg-color);
-	background-size: cover;
 }
 
 .flexing{
@@ -38,9 +37,10 @@ body {
 	align-items: center; 
 	position: sticky;
 	margin: 0;
+	padding: .75rem;
 	display: flex;
 	flex-direction: row-reverse;
-	border-bottom: 2px solid var(--font-color);
+	border-bottom: 2px solid var(--extra-color);
 	top: 0;
 	z-index: 1;
 }
