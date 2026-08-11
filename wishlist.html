@@ -32,6 +32,28 @@
 	</header>
 	
 	<div class="flexing">
+		<aside id="aside" hidden>
+			<section id="wishlist-edit" id="wishlist" hidden>
+					<h3>Add an Item</h3>
+					<form id="wishlist-form">
+						<label for="item-name">Item name:</label>
+						<input type="text" id="item-name" name="item-name" required>
+						<label for="item-link">Item link:</label>
+						<textarea type="url" id="item-link" name="item-link" placeholder="https://..." required></textarea>
+						<label for="item-desc">Description/Specification:</label>
+						<textarea id="item-desc" name="item-desc" rows="4" placeholder="Enter a description or specification for the item..." required></textarea>
+						<label for="priority">Priority Level:</label>
+						<select id="priority" name="item-priority" required>
+							<option value="" disabled selected>Select a priority</option>
+							<option value="low">Low</option>
+							<option value="medium">Medium</option>
+							<option value="high">High</option>
+						</select>
+						<button type="submit">Save Item</button>
+					</form>
+				</section>
+
+		</aside>
 		<main>
 				<h2 id="wishlist-name">My Wishlist</h2>
 				
@@ -56,26 +78,6 @@
 
 				<button id="loadMoreBtn" hidden>Load More</button>
 
-				
-				<section id="wishlist-edit" class="card" hidden>
-					<h3>Add an Item</h3>
-					<form id="wishlist-form">
-						<label for="item-name">Item name:</label>
-						<input type="text" id="item-name" name="item-name" required>
-						<label for="item-link">Item link:</label>
-						<textarea type="url" id="item-link" name="item-link" placeholder="https://..." required></textarea>
-						<label for="item-desc">Description/Specification:</label>
-						<textarea id="item-desc" name="item-desc" rows="4" placeholder="Enter a description or specification for the item..." required></textarea>
-						<label for="priority">Priority Level:</label>
-						<select id="priority" name="item-priority" required>
-							<option value="" disabled selected>Select a priority</option>
-							<option value="low">Low</option>
-							<option value="medium">Medium</option>
-							<option value="high">High</option>
-						</select>
-						<button type="submit">Save Item</button>
-					</form>
-				</section>
 				
 				<section id="logged-out" hidden>
 					<h2> Please Log in before Proceeding. </h2>

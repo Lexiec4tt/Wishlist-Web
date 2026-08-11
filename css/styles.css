@@ -99,6 +99,16 @@ main {
 	transform: translateY(-5px) scale(1.1);	 
 }
 
+#aside {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--bg-card-color);
+	width: min(17rem, 90vw);
+	padding: 1rem;
+	border-right: 3px solid var(--bg-card-border-color);
+	margin-right: 3rem;
+	min-height: 100vh;
+}
 
 nav ul {
 	display: flex;

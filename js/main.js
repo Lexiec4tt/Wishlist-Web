@@ -28,6 +28,7 @@ const getStartedLinks = { wishlist: document.getElementById("wishlistCard"),
   rules: document.getElementById("guidelines")
  }
 const getStartedHeader = document.getElementById("get-started-header");
+const aside = document.getElementById("aside");
 let isOwner = false;
 
 const params = new URLSearchParams(window.location.search);
@@ -73,6 +74,7 @@ onAuthStateChanged(auth, (user) => {
 
       if (!owner) {
         wishlistFormContainer.hidden = true;
+        aside.style.display = "none";
       }
     }
 
