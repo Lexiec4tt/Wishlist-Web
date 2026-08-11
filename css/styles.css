@@ -244,6 +244,10 @@ text-area{
 
 @media (max-width: 768px) {
 
+	.flexing {
+        flex-direction: column-reverse;
+    }
+
 	#main-header {
         flex-direction: column-reverse;
         justify-content: center;
@@ -259,6 +263,12 @@ text-area{
 	#header-img h2 {
 		font-size: 1.75rem;
 		padding-right: 1rem;
+	}
+
+	#aside {
+		margin-top: 2rem;
+		width: max(91.75%);
+		min-height: 200px;
 	}
 
     header h1 {
