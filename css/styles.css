@@ -6,15 +6,15 @@
 	--bg-card-color: #433a62;
 	--bg-card-shadow-color: #0b1402;
 	--bg-card-border-color: #38323e;
-	--extra-color:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+	--extra-color:#243932;
 	--header-image: url("https://i.pinimg.com/1200x/0c/5c/2e/0c5c2ee4e2b4b5f934379ad29c5e8e7b.jpg	");
 }
 
 :root {
-	--bg-color: #e9cfff;
+	--bg-color: #ddc5f1;
 	--header-bg-color: #c5a3ff;
 	--font-color: #3F2252;
-	--bg-card-color: #f7aef8;
+	--bg-card-color: #b1c9ac;
 	--bg-card-shadow-color: #44265f;
 	--bg-card-border-color: #48285e;
 	--extra-color: #bc98ff;
@@ -30,7 +30,7 @@ body {
 
 .flexing{
 	display: flex;
-	margin: 0 auto;
+	margin: 0;
 }
 
 #main-header {
@@ -42,7 +42,7 @@ body {
 	padding: .75rem;
 	display: flex;
 	flex-direction: row-reverse;
-	border-bottom: 2px solid var(--extra-color);
+	border-bottom: 5px solid var(--extra-color);
 	top: 0;
 	z-index: 1;
 }
@@ -53,12 +53,22 @@ header h1{
 }
 
 #header-img {
-	background-image: var(--header-image);
+	background: linear-gradient(rgba(0, 0, 0, .15), rgba(0, 0, 0, .15)), var(--header-image);
 	margin: 0;
 	width: 100%;
 	height: 400px;
 	background-size: cover;
 	background-position: bottom;
+	align-items: center;
+	display: flex;
+	justify-content: right;
+}
+
+#header-img h2 {
+	text-align: right;
+	margin: 0;
+	padding-right: 4rem;
+	font-size: 3rem;
 }
 #welcome {
 	font-size: 1.25rem;
