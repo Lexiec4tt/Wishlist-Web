@@ -12,7 +12,9 @@ if (settingsBtn) {
 
 if(savedTheme === "dark"){
   document.body.classList.add("dark");
-  themeToggle.textContent = "☀️ Light Mode";
+  if(themeToggle){
+    themeToggle.textContent = "☀️ Light Mode";
+  }
 }
 
 if (themeToggle) {
