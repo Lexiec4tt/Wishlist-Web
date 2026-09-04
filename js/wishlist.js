@@ -105,7 +105,7 @@ if(wishlistForm) {
 
           const newItem = createWishlistItem(itemData, itemData.id);
           wishlistContainer.appendChild(newItem);
-          WishlistForm.reset();
+          wishlistForm.reset();
 
         }
       }
@@ -139,7 +139,7 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
 
   const reserveOwner = itemData.reservedBy === auth.currentUser.uid;
   const isReserved = itemData.reservedBy != null;
-  const canReserve = !isOwner && (!isReserved || reserveOwner);
+  const canReserve = !isOwner && (!isReserved || reserveOwner || itemData.received === true);
   reserveButton.hidden = !canReserve;
   reserveButton.textContent = reserveOwner ? "Cancel Reservation" : "Reserve";
   if(reserveOwner){
