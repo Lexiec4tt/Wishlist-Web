@@ -7,7 +7,12 @@
 	--bg-card-shadow-color: #0b1402;
 	--bg-card-border-color: #38323e;
 	--extra-color:#243932;
-	--header-image: url("https://i.pinimg.com/1200x/0c/5c/2e/0c5c2ee4e2b4b5f934379ad29c5e8e7b.jpg	");
+	--button-color: #8060b5;
+    --button-hover-color: #9675c9;
+    --button-text-color: #fff8ff;
+
+	--checkbox-color: #7d9b82;
+	--header-image: url("https://i.pinimg.com/1200x/0c/5c/2e/0c5c2ee4e2b4b5f934379ad29c5e8e7b.jpg");
 }
 
 :root {
@@ -18,6 +23,10 @@
 	--bg-card-shadow-color: #44265f;
 	--bg-card-border-color: #48285e;
 	--extra-color: #bc98ff;
+	--button-color: #718b6d;
+	--button-hover-color: #5f795b;
+	--button-text-color: #fffceb;
+	--checkbox-color: #6851ad;
 	--header-image: url("https://i.pinimg.com/1200x/71/e5/65/71e565e6e651014298cfa1044493b2ac.jpg");
 }
 
@@ -83,13 +92,46 @@ main {
 	align-items: center;
 }
 
-.card {
+
+.card, .wishlist-card {
 	margin: .75rem auto;
 	background-color: var(--bg-card-color);
 	padding: 2rem;
 	border-radius: 20px;
 	box-shadow: 5px 5px 10px var(--bg-card-shadow-color);
 	width: min(17rem, 90vw);
+}
+
+.wishlist-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.card button, .wishlist-card button, #loadMoreBtn, #wishlist-form button, #signup-form button, #login-form button {
+	font-family: "Fredoka", sans-serif;
+	max-width: 50%;
+	min-height: 2rem;
+	background-color: var(--button-color);
+	color: var(--button-text-color);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.card button:hover, #loadMoreBtn:hover, #wishlist-form button:hover,
+ #signup-form button:hover, #login-form button:hover {
+	background-color: var(--button-hover-color);
+}
+
+#loadMoreBtn {
+	margin: 3rem auto 1rem;
+	transform: translateY(-5px) scale(1.5);
+}
+
+.card p {
+	margin: 0;
 }
 
 .profile-card {
@@ -189,14 +231,24 @@ nav a {
 
 }
 
-.received-check{
-    display: block;
+.received-checkbox {
+    accent-color: var(--checkbox-color);
 }
 
 #login-form, #wishlist-form, #signup-form{
 	display: flex;
 	flex-direction: column;
 	line-height: 1.5rem;
+}
+
+#wishlist-form input, #signup-form input, #login-form input, #wishlist-form select, #wishlist-form textarea,	 
+#wishlist-form button, #signup-form button, #login-form button {
+	margin-bottom: 0.5rem;
+	padding: 0.25rem;
+	border-radius: 5px;
+	border: 1px solid var(--font-color);
+	font-family: "Fredoka", sans-serif;
+	margin-top: 0.5rem;
 }
 
 .hidden {
@@ -241,6 +293,7 @@ text-area{
 	overflow-wrap: break-word;
   	resize: vertical;
 }
+
 
 @media (max-width: 768px) {
 
@@ -292,9 +345,10 @@ text-area{
     }
 
     /* Cards */
-    .card {
+    .card, .wishlist-card {
         width: min(90vw, 17rem);
         padding: 1.5rem;
+		margin: 1rem;
     }
 
     /* Card containers */
@@ -304,7 +358,6 @@ text-area{
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
-		margin: 0 auto;
     }
 
     /* Forms */
@@ -315,7 +368,7 @@ text-area{
     }
 
     input,
-    select {
+    #wishlist-form select {
         width: 100%;
         box-sizing: border-box;
     }
@@ -324,4 +377,16 @@ text-area{
     .dropdown-menu {
         left: 0;
     }
+
+	.received-label {
+		display: inline-flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 0.5rem;
+		width: fit-content;
+	}
+
+	.received-checkbox {
+		transform: scale(1.5);
+	}
 }

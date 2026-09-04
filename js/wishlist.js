@@ -29,7 +29,7 @@ const loadMoreBtn =
 
 const usernameCache = new Map();
 
-const pageSize = 20;
+const pageSize = 10;
 
 let lastVisible = null;
 let editingItemId = null;
@@ -68,11 +68,11 @@ if(wishlistForm) {
             });
 
             const card = wishlistContainer.querySelector(
-                `.card[data-id="${editingItemId}"]`
+                `.wishlist-card[data-id="${editingItemId}"]`
             );
 
-            card.querySelector(".card h3 a").textContent = itemName;
-            card.querySelector(".card h3 a").href = itemLink;
+            card.querySelector(".wishlist-card h3 a").textContent = itemName;
+            card.querySelector(".wishlist-card h3 a").href = itemLink;
             card.querySelector(".priority").textContent =
                 `Priority level: ${itemPriority}`;
             card.querySelector(".desc").textContent =
@@ -104,8 +104,16 @@ if(wishlistForm) {
           itemData.id = docRef.id;
 
           const newItem = createWishlistItem(itemData, itemData.id);
+          const newCard = newItem.querySelector(".wishlist-card");
+          
           wishlistContainer.appendChild(newItem);
           wishlistForm.reset();
+
+          newCard.scrollIntoView(
+          {
+            behavior: "smooth",
+            block: "center"
+          });
 
         }
       }
@@ -118,7 +126,7 @@ if(wishlistForm) {
 function createWishlistItem(itemData, itemDataid, vieweduid) {
   const template = document.getElementById("wishlist-template");
   const newItem = template.content.cloneNode(true);
-  newItem.querySelector(".card").dataset.id = itemDataid;
+  newItem.querySelector(".wishlist-card").dataset.id = itemDataid;
   const receivedCheckbox = newItem.querySelector(".received-checkbox");
   const deleteButton = newItem.querySelector(".deleteBtn");
   const reserveButton = newItem.querySelector(".reserveBtn");
@@ -126,10 +134,10 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   const editButton = newItem.querySelector(".editBtn");
   deleteButton.hidden = !isOwner; // Hide delete button if not the owner
   editButton.hidden = !isOwner; // Hide edit button if not the owner
-  newItem.querySelector(".card h3 a").textContent = itemData.name;
-  newItem.querySelector(".card h3 a").href = itemData.link;
-  newItem.querySelector(".card h3 a").target = "_blank";
-  newItem.querySelector(".card h3 a").rel = "noopener noreferrer";
+  newItem.querySelector(".wishlist-card h3 a").textContent = itemData.name;
+  newItem.querySelector(".wishlist-card h3 a").href = itemData.link;
+  newItem.querySelector(".wishlist-card h3 a").target = "_blank";
+  newItem.querySelector(".wishlist-card h3 a").rel = "noopener noreferrer";
   newItem.querySelector(".desc").textContent = `Description/Specification: ${itemData.description || "N/A"}`;
   newItem.querySelector(".priority").textContent = `Priority level: ${itemData.priority}`;
   newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
@@ -145,11 +153,6 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   if(reserveOwner){
   reservedMessage.textContent = "You have reserved this item to gift.";
   }
-  
-  wishlistForm.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
 
   checkboxUpdate(receivedCheckbox,itemDataid);
   deleteItem(deleteButton, itemDataid);
@@ -166,9 +169,10 @@ export async function loadWishlist(uid) {
   lastVisible = null;
 
   const wishlistName = document.getElementById("wishlist-name");
+  if (uid !== auth.currentUser?.uid) {
   wishlistName.textContent = `${await getUsername(uid)}'s Wishlist`;
-
-  await loadWishlistPage(uid);
+  }
+  await loadWishlistPage(uid);s
 }
 
 async function loadWishlistPage(uid) {
@@ -204,6 +208,7 @@ async function loadWishlistPage(uid) {
     wishlistContainer.appendChild(newItem);
   });
 
+  
   lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
 
   loadMoreBtn.hidden = snapshot.size < pageSize;
@@ -211,7 +216,7 @@ async function loadWishlistPage(uid) {
 
 if (loadMoreBtn) {
   loadMoreBtn.addEventListener("click", async () => {
-
+    
     const uid = viewedUid || auth.currentUser.uid;
 
     await loadWishlistPage(uid);
@@ -259,7 +264,7 @@ async function deleteItem(deleteBtn, itemDataid) {
     );
 
     await deleteDoc(wishlistItemRef);
-    deleteBtn.closest(".card").remove();
+    deleteBtn.closest(".wishlist-card").remove();
   })
 }
 

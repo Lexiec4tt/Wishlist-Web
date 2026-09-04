@@ -62,16 +62,16 @@
 				</section>
 				
 				<template id="wishlist-template">
-						<article class="card template">
+						<article class="wishlist-card template">
 							<h3><a class="Item-link" href=#>Item Name</a></h3>
 							<p class="desc">Description/Specification:</p>
 							<p class="priority">Priority level:</p>
 							<small class="date">Added:</small>
-								<label>
+								<label class="received-label" for="received-checkbox">
 									<input type="checkbox" class="received-checkbox" disabled>Received</label>
-								<button class="deleteBtn" hidden>Delete</button>
 								<button class="reserveBtn" hidden>Reserve</button>	
 								<button class="editBtn" hidden>Edit</button>
+								<button class="deleteBtn" hidden>Delete</button>
 							<p class="reservedMsg" hidden>This item has been reserved by someone else to gift!</p>
 						</article>
 					</template>
