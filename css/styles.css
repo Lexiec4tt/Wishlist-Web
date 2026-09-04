@@ -63,7 +63,7 @@ header h1{
 
 #header-img {
 	background: linear-gradient(rgba(0, 0, 0, .15), rgba(0, 0, 0, .15)), var(--header-image);
-	margin: 0;
+	margin: 0 0 20px 0;
 	width: 100%;
 	height: 400px;
 	background-size: cover;
@@ -99,7 +99,7 @@ main {
 	padding: 2rem;
 	border-radius: 20px;
 	box-shadow: 5px 5px 10px var(--bg-card-shadow-color);
-	width: min(17rem, 90vw);
+	width: min(18rem, 90vw);
 }
 
 .wishlist-card {
@@ -121,7 +121,7 @@ main {
 }
 
 .card button:hover, #loadMoreBtn:hover, #wishlist-form button:hover,
- #signup-form button:hover, #login-form button:hover {
+ #signup-form button:hover, #login-form button:hover, .wishlist-card button:hover {
 	background-color: var(--button-hover-color);
 }
 
@@ -233,6 +233,8 @@ nav a {
 
 .received-checkbox {
     accent-color: var(--checkbox-color);
+	transform: scale(1.25);
+	margin-right: 0.5rem;
 }
 
 #login-form, #wishlist-form, #signup-form{
@@ -286,6 +288,12 @@ a {
 
 #get-started-container h3 {
 	text-align: center;
+}
+
+hr {
+	border: 1px solid var(--font-color);
+	width: 95%;
+	margin-top: 4rem;
 }
 
 text-area{
