@@ -135,16 +135,21 @@ function createWishlistItem(itemData, itemDataid, vieweduid) {
   newItem.querySelector(".date").textContent = `Added: ${toJsDate(itemData.addedDate).toLocaleDateString()}`;
   newItem.querySelector(".received-checkbox").checked = itemData.received;
   receivedCheckbox.disabled = !isOwner;
-  reservedMessage.hidden = isOwner || itemData.reservedBy === null;
+  reservedMessage.hidden = isOwner || itemData.reservedBy === null || itemData.received;
 
   const reserveOwner = itemData.reservedBy === auth.currentUser.uid;
   const isReserved = itemData.reservedBy != null;
-  const canReserve = !isOwner && (!isReserved || reserveOwner || itemData.received === true);
-  reserveButton.hidden = !canReserve;
+  const canReserve = !isOwner && (!isReserved || reserveOwner);
+  reserveButton.hidden = (!canReserve || itemData.received);
   reserveButton.textContent = reserveOwner ? "Cancel Reservation" : "Reserve";
   if(reserveOwner){
   reservedMessage.textContent = "You have reserved this item to gift.";
   }
+  
+  wishlistForm.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
 
   checkboxUpdate(receivedCheckbox,itemDataid);
   deleteItem(deleteButton, itemDataid);
@@ -277,8 +282,6 @@ async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reserved
     });
 
     itemData.reservedBy = auth.currentUser.uid;
-    reserveBtn.textContent = "Cancel Reservation";
-    reservedMsg.textContent = "You have reserved this item to gift.";
     reservedMsg.hidden = false;
 
     } else if (itemData.reservedBy === auth.currentUser.uid) {
