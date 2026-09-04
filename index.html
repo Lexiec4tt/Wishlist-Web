@@ -42,6 +42,34 @@
 	<div class="flexing">
 
 		<main>
+			
+			<header id="get-started-header" hidden>
+				<h2>Get Started!</h2>
+			</header>
+			<section id="get-started-container" hidden>
+				<article id="wishlistCard"class="card template" hidden>
+					<h3><a href=wishlist.html>Add an Item to your Wishlist!</a></h3>
+				</article>
+				<article id="exploreCard" class="card template" hidden>
+					<h3><a href=explore.html>View other Wishlists!</a></h3>	
+				</article>
+			</section>
+
+			<section id="login" class="card" hidden>
+				<h3>Welcome back!</h3>
+				<form id="login-form">
+					<label for="email">Email</label>
+					<input type="email" id="email" name="login-email" required>
+
+					<label for="password">Password</label>
+					<input type="password" id="password" name="login-password" required>
+
+					<button type="submit">Log In</button>
+				</form>
+				<p id="error-message" hidden>placeholder</p>
+				<p>New to the website? Sign up <a href=signup.html>here.</a></p>
+			</section>
+			
 			<section id="welcome">
 				<h3>RECENT UPDATE (09/04/2026):</h3>
 				<ul>
@@ -64,32 +92,6 @@
 						<li>NOTE: Please respect the rules of this website. I took a lot of time learning to code and debug this, so if I see anyone breaking the rules,<br>
 						their wishlist items may be subject to deletion and accounts may be suspended or deleted.</li>
 					</ul>
-				</article>
-			</section>
-			<section id="login" class="card" hidden>
-				<h3>Welcome back!</h3>
-				<form id="login-form">
-					<label for="email">Email</label>
-					<input type="email" id="email" name="login-email" required>
-
-					<label for="password">Password</label>
-					<input type="password" id="password" name="login-password" required>
-
-					<button type="submit">Log In</button>
-				</form>
-				<p id="error-message" hidden>placeholder</p>
-				<p>New to the website? Sign up <a href=signup.html>here.</a></p>
-			</section>
-			
-			<header id="get-started-header" hidden>
-				<h2>Get Started!</h2>
-			</header>
-			<section id="get-started-container" hidden>
-				<article id="wishlistCard"class="card template" hidden>
-					<h3><a href=wishlist.html>Add an Item to your Wishlist!</a></h3>
-				</article>
-				<article id="exploreCard" class="card template" hidden>
-					<h3><a href=explore.html>View other Wishlists!</a></h3>	
 				</article>
 			</section>
 		</main>
