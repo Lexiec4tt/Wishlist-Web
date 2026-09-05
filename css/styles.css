@@ -109,7 +109,7 @@ main {
 }
 
 .card button, .wishlist-card button, #loadMoreBtn, #wishlist-form button, 
-#privacy-button, #signup-form button, #login-form button {
+#privacy-button, #share-button, #signup-form button, #login-form button {
 	font-family: "Fredoka", sans-serif;
 	max-width: 50%;
 	min-height: 2rem;
@@ -122,7 +122,7 @@ main {
 	margin-top: 0.5rem;
 }
 
-#privacy-button {
+#privacy-button, #share-button {
 	max-width: 100%;
 }
 

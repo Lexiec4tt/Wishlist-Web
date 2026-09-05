@@ -33,6 +33,9 @@ const privacyBtn =
 const privacyMsg =
   document.getElementById("privacy-message");
 
+const shareBtn =
+  document.getElementById("share-button");
+
 const usernameCache = new Map();
 
 const pageSize = 10;
@@ -237,6 +240,13 @@ if(privacyBtn) {
   });
 }
 
+if(shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    shareWishlist(auth.currentUser.uid);
+    alert("Wishlist link copied to clipboard!");
+  });
+}
+
 function toJsDate(timestamp) {
     if (!timestamp?.seconds) {
     return new Date(); // temporary fallback
@@ -293,6 +303,11 @@ async function wishlistPrivacyToggle( privacyMsg, uid) {
     privacyMsg.textContent = !currentPrivacy
         ? "Your Wishlist is now private."
         : "Your Wishlist is now public.";
+}
+
+async function shareWishlist(uid) {
+  const shareUrl = `${window.location.origin}/wishlist.html?user=${uid}`;
+  navigator.clipboard.writeText(shareUrl);
 }
 
 async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reservedMsg) {
