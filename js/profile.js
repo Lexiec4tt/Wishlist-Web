@@ -24,6 +24,9 @@ async function loadProfiles() {
 
   snapshot.forEach((doc) => {
     const userData = { uid: doc.id, ...doc.data() };
+    if (userData.privacy) {
+      return;
+    }
     const profileCard = createProfileCard(userData, doc.id);
     profileContainer.appendChild(profileCard);
   });

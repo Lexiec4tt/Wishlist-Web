@@ -52,7 +52,8 @@ if (signupForm) {
     await setDoc(userDocRef, {
       username: username,
       email: email,
-      joined: serverTimestamp()
+      joined: serverTimestamp(),
+      privacy: false
     });
     await setDoc(doc(db, "usernames", usernameLower), {
       uid: user.uid

@@ -27,6 +27,12 @@ const wishlistForm =
 const loadMoreBtn =
   document.getElementById("loadMoreBtn");
 
+const privacyBtn =
+  document.getElementById("privacy-button");
+
+const privacyMsg =
+  document.getElementById("privacy-message");
+
 const usernameCache = new Map();
 
 const pageSize = 10;
@@ -34,6 +40,7 @@ const pageSize = 10;
 let lastVisible = null;
 let editingItemId = null;
 let isOwner = false;
+
 
 const params = new URLSearchParams(window.location.search);
 const viewedUid = params.get("user");
@@ -172,7 +179,7 @@ export async function loadWishlist(uid) {
   if (uid !== auth.currentUser?.uid) {
   wishlistName.textContent = `${await getUsername(uid)}'s Wishlist`;
   }
-  await loadWishlistPage(uid);s
+  await loadWishlistPage(uid);
 }
 
 async function loadWishlistPage(uid) {
@@ -224,6 +231,12 @@ if (loadMoreBtn) {
   });
 }
 
+if(privacyBtn) {
+  privacyBtn.addEventListener("click", async () => {
+    wishlistPrivacyToggle(privacyMsg, auth.currentUser.uid);
+  });
+}
+
 function toJsDate(timestamp) {
     if (!timestamp?.seconds) {
     return new Date(); // temporary fallback
@@ -266,6 +279,20 @@ async function deleteItem(deleteBtn, itemDataid) {
     await deleteDoc(wishlistItemRef);
     deleteBtn.closest(".wishlist-card").remove();
   })
+}
+
+async function wishlistPrivacyToggle( privacyMsg, uid) {
+  const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    const currentPrivacy = userSnap.data().privacy;
+
+    await updateDoc(userRef, {
+        privacy: !currentPrivacy
+    });
+
+    privacyMsg.textContent = !currentPrivacy
+        ? "Your Wishlist is now private."
+        : "Your Wishlist is now public.";
 }
 
 async function reserveItem(reserveBtn, itemData, itemDataid, viewedUid, reservedMsg) {

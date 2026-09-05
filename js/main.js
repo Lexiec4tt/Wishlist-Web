@@ -5,7 +5,13 @@ import "./profile.js";
 import "./wishlist.js";
 import { loadWishlist, setWishlistOwner } from "./wishlist.js";
 
-import { auth } from "./firebase.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import { db, auth } from "./firebase.js";
 import {
   getAuth,
   onAuthStateChanged,
@@ -29,12 +35,14 @@ const getStartedLinks = { wishlist: document.getElementById("wishlistCard"),
  }
 const getStartedHeader = document.getElementById("get-started-header");
 const aside = document.getElementById("aside");
+const privacyBtn = document.getElementById("privacy-button");
+const privacyMsg = document.getElementById("privacy-message");
 let isOwner = false;
 
 const params = new URLSearchParams(window.location.search);
 const viewedUid = params.get("user");
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
 
     const loggedIn = !!user;
 
@@ -62,9 +70,23 @@ onAuthStateChanged(auth, (user) => {
     }
 
 
+
     if (!user) return;
     const uidToLoad = viewedUid || user.uid;
+    const userRef = doc(db, "users", user.uid);
+    if(privacyBtn && privacyMsg){
 
+      const userSnap = await getDoc(userRef);
+      const currentPrivacy = userSnap.data().privacy;
+
+      if (currentPrivacy) {
+          privacyMsg.textContent = "Your Wishlist is currently private.";
+          privacyBtn.textContent = "Make Wishlist Public";
+      } else {
+          privacyMsg.textContent = "Your Wishlist is currently public.";
+          privacyBtn.textContent = "Make Wishlist Private";
+      }
+    }
 
     const owner = uidToLoad === user.uid;
     setWishlistOwner(owner);
@@ -75,6 +97,7 @@ onAuthStateChanged(auth, (user) => {
       if (!owner) {
         wishlistFormContainer.hidden = true;
         aside.style.display = "none";
+
       }
     }
 
