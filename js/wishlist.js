@@ -303,6 +303,9 @@ async function wishlistPrivacyToggle( privacyMsg, uid) {
     privacyMsg.textContent = !currentPrivacy
         ? "Your Wishlist is now private."
         : "Your Wishlist is now public.";
+    privacyBtn.textContent = !currentPrivacy
+        ? "Make Wishlist Public"
+        : "Make Wishlist Private";
 }
 
 async function shareWishlist(uid) {
