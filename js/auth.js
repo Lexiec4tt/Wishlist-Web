@@ -21,7 +21,6 @@ import {
 
 const signupForm = document.getElementById("signup-form");
 const loginForm = document.getElementById("login-form");
-const loginSection = document.getElementById("login");
 const logoutBtn = document.getElementById("logoutBtn");
 
 
