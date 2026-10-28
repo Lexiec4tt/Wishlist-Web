@@ -214,6 +214,7 @@ async function loadWishlistPage(uid) {
     wishlistQuery = query(
       wishlistRef,
       orderBy("received", "asc"),
+      orderBy("priority_num","desc"),
       orderBy("addedDate", "desc"),
       startAfter(lastVisible),
       limit(pageSize)
@@ -222,6 +223,7 @@ async function loadWishlistPage(uid) {
     wishlistQuery = query(
       wishlistRef,
       orderBy("received", "asc"),
+      orderBy("priority_num","desc"),
       orderBy("addedDate", "desc"),
       limit(pageSize)
     );
