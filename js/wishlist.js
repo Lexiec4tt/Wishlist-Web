@@ -56,6 +56,23 @@ if(wishlistForm) {
     const itemPriority = wishlistForm["item-priority"].value;
     const itemDescription = wishlistForm["item-desc"].value;
 
+    let priorityNum;
+
+    switch(itemPriority){
+      case "high":
+          priorityNum = 3;
+          break;
+      case "medium":
+          priorityNum = 2;
+          break;
+      case "low":
+          priorityNum = 1;
+          break;
+      default:
+          priorityNum = 0;
+          break;
+    }
+
     try {
       const user = auth.currentUser;
       if (user) {
@@ -74,6 +91,7 @@ if(wishlistForm) {
                 name: itemName,
                 link: itemLink,
                 priority: itemPriority,
+                priority_num: priorityNum,
                 description: itemDescription
             });
 
@@ -101,6 +119,7 @@ if(wishlistForm) {
             name: itemName,
             link: itemLink,
             priority: itemPriority,
+            priority_num: priorityNum,
             description: itemDescription,
             received: false,
             reservedBy: null,
